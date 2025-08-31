@@ -1,21 +1,22 @@
 import { Button } from "./ui/button";
 import { ArrowRight, Brain, Zap, Play, Users, TrendingUp, Shield } from "lucide-react";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
-import { useRouter } from "./Router";
 import { motion } from "motion/react";
+import { useNavigate } from "react-router-dom";
 
 export function HeroSection() {
-  const { navigate } = useRouter();
+  const navigate = useNavigate();
 
   return (
     <section className="relative overflow-hidden bg-gradient-to-br from-slate-50 via-background to-blue-50 py-20 sm:py-32">
-      {/* Background Pattern */}
+      {/* Background pattern */}
       <div className="absolute inset-0 bg-grid-slate-100 bg-[size:20px_20px] opacity-50"></div>
-      
+
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative">
+        {/* Hero Text */}
         <div className="text-center max-w-4xl mx-auto mb-16">
           {/* Badge */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="inline-flex items-center space-x-2 bg-blue-50 border border-blue-200 text-blue-700 px-4 py-2 rounded-full text-sm mb-6"
@@ -24,20 +25,22 @@ export function HeroSection() {
             <span>AI-Powered Railway Optimization</span>
             <Zap className="h-4 w-4" />
           </motion.div>
-          
-          {/* Main Headline */}
-          <motion.h1 
+
+          {/* Headline */}
+          <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
             className="text-5xl sm:text-6xl lg:text-7xl tracking-tight mb-6"
           >
-            Transform Indian Railways with
-            <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent"> AI Intelligence</span>
+            Transform Indian Railways with{" "}
+            <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+              AI Intelligence
+            </span>
           </motion.h1>
-          
+
           {/* Subtitle */}
-          <motion.p 
+          <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
@@ -46,30 +49,39 @@ export function HeroSection() {
             Move from manual, experience-driven train control to intelligent, data-driven operations. 
             Our AI optimization system reduces delays by 40% and increases efficiency by 60%.
           </motion.p>
-          
+
           {/* CTA Buttons */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
             className="flex flex-col sm:flex-row gap-4 justify-center mb-16"
           >
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <Button size="lg" className="text-lg px-8 py-6 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700" onClick={() => navigate('signup')}>
+              <Button
+                size="lg"
+                className="text-lg px-8 py-6 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
+                onClick={() => navigate("/signup")}
+              >
                 Get Started
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </motion.div>
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <Button variant="outline" size="lg" className="text-lg px-8 py-6 border-2" onClick={() => navigate('demo')}>
+              <Button
+                variant="outline"
+                size="lg"
+                className="text-lg px-8 py-6 border-2"
+                onClick={() => navigate("/demo")}
+              >
                 <Play className="mr-2 h-5 w-5" />
                 Watch Demo
               </Button>
             </motion.div>
           </motion.div>
-          
+
           {/* Trust Indicators */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
@@ -93,9 +105,9 @@ export function HeroSection() {
             </div>
           </motion.div>
         </div>
-        
-        {/* Hero Image/Dashboard */}
-        <motion.div 
+
+        {/* Hero Image with floating stats */}
+        <motion.div
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
@@ -107,37 +119,25 @@ export function HeroSection() {
               alt="Railway Control Dashboard"
               className="w-full h-[400px] sm:h-[500px] object-cover rounded-2xl"
             />
-            
-            {/* Floating UI Elements */}
-            <motion.div 
-              animate={{ y: [0, -10, 0] }}
-              transition={{ duration: 3, repeat: Infinity }}
-              className="absolute top-8 left-8 bg-white rounded-xl shadow-lg p-4 border"
-            >
+
+            {/* Floating cards */}
+            <motion.div animate={{ y: [0, -10, 0] }} transition={{ duration: 3, repeat: Infinity }} className="absolute top-8 left-8 bg-white rounded-xl shadow-lg p-4 border">
               <div className="flex items-center space-x-2 mb-2">
                 <div className="h-3 w-3 bg-green-500 rounded-full animate-pulse"></div>
                 <span className="text-sm font-medium">Live Monitoring</span>
               </div>
               <div className="text-xs text-muted-foreground">247 trains tracked</div>
             </motion.div>
-            
-            <motion.div 
-              animate={{ y: [0, 10, 0] }}
-              transition={{ duration: 3, repeat: Infinity, delay: 1.5 }}
-              className="absolute bottom-8 right-8 bg-white rounded-xl shadow-lg p-4 border"
-            >
+
+            <motion.div animate={{ y: [0, 10, 0] }} transition={{ duration: 3, repeat: Infinity, delay: 1.5 }} className="absolute bottom-8 right-8 bg-white rounded-xl shadow-lg p-4 border">
               <div className="flex items-center space-x-2 mb-2">
                 <TrendingUp className="h-4 w-4 text-green-500" />
                 <span className="text-sm font-medium">Efficiency</span>
               </div>
               <div className="text-lg font-bold text-green-600">+47%</div>
             </motion.div>
-            
-            <motion.div 
-              animate={{ y: [0, -5, 0] }}
-              transition={{ duration: 2, repeat: Infinity, delay: 0.5 }}
-              className="absolute top-8 right-8 bg-white rounded-xl shadow-lg p-4 border"
-            >
+
+            <motion.div animate={{ y: [0, -5, 0] }} transition={{ duration: 2, repeat: Infinity, delay: 0.5 }} className="absolute top-8 right-8 bg-white rounded-xl shadow-lg p-4 border">
               <div className="flex items-center space-x-2 mb-2">
                 <Shield className="h-4 w-4 text-blue-500" />
                 <span className="text-sm font-medium">Safety Score</span>
@@ -146,17 +146,10 @@ export function HeroSection() {
             </motion.div>
           </div>
         </motion.div>
-        
+
         {/* Bottom CTA */}
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.7 }}
-          className="text-center mt-16"
-        >
-          <p className="text-muted-foreground mb-4">
-            Join 500+ railway professionals already using RailOptimize
-          </p>
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.7 }} className="text-center mt-16">
+          <p className="text-muted-foreground mb-4">Join 500+ railway professionals already using RailOptimize</p>
           <div className="flex items-center justify-center space-x-2 text-sm text-muted-foreground">
             <Users className="h-4 w-4" />
             <span>Trusted by Indian Railways divisions nationwide</span>

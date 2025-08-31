@@ -1,5 +1,5 @@
 import { Card, CardContent } from "./ui/card";
-import { AlertTriangle, Clock, Users, TrendingUp, Video } from "lucide-react";
+import { AlertTriangle, Clock, Users, TrendingUp } from "lucide-react";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 import { motion } from "motion/react";
 import { useEffect, useRef } from "react";
@@ -12,8 +12,7 @@ export function ProblemSection() {
       const video = videoRef.current;
       if (!video) return;
       const rect = video.getBoundingClientRect();
-      const completelyOutOfView =
-        rect.bottom < 0 || rect.top > window.innerHeight;
+      const completelyOutOfView = rect.bottom < 0 || rect.top > window.innerHeight;
       if (completelyOutOfView && !video.paused) {
         video.pause();
       }
@@ -21,33 +20,30 @@ export function ProblemSection() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
   const challenges = [
     {
       icon: Clock,
       title: "Manual Decision Making",
-      description:
-        "Controllers rely on experience and intuition, struggling to keep up with growing traffic demands.",
+      description: "Controllers rely on experience and intuition, struggling to keep up with growing traffic demands.",
       color: "text-red-600",
     },
     {
       icon: TrendingUp,
       title: "Exponential Complexity",
-      description:
-        "A large-scale combinatorial optimization problem where solution space grows exponentially.",
+      description: "A large-scale combinatorial optimization problem where solution space grows exponentially.",
       color: "text-orange-600",
     },
     {
       icon: AlertTriangle,
       title: "Disruption Management",
-      description:
-        "When breakdowns or delays occur, controllers must quickly reshuffle priorities without optimization tools.",
+      description: "When breakdowns or delays occur, controllers must quickly reshuffle priorities without optimization tools.",
       color: "text-yellow-600",
     },
     {
       icon: Users,
       title: "Resource Constraints",
-      description:
-        "Limited tracks, signals, and platforms must handle thousands of trains with different priorities daily.",
+      description: "Limited tracks, signals, and platforms must handle thousands of trains with different priorities daily.",
       color: "text-blue-600",
     },
   ];
@@ -55,24 +51,20 @@ export function ProblemSection() {
   return (
     <section id="problem" className="py-20 bg-white">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Section Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           className="max-w-3xl mx-auto text-center mb-16"
         >
-          <h2 className="text-3xl sm:text-4xl mb-6">
-            The Challenge Facing Indian Railways
-          </h2>
+          <h2 className="text-3xl sm:text-4xl mb-6">The Challenge Facing Indian Railways</h2>
           <p className="text-xl text-muted-foreground leading-relaxed">
-            Indian Railways operates one of the world's largest train networks.
-            Every day, thousands of passenger and freight trains share the same
-            infrastructure, creating an incredibly complex coordination
-            challenge.
+            Indian Railways operates one of the world's largest train networks. Every day, thousands of passenger and freight trains share the same infrastructure, creating an incredibly complex coordination challenge.
           </p>
         </motion.div>
 
-        {/* Styled Video Section */}
+        {/* Video Section */}
         <div className="flex justify-center mb-12">
           <div className="relative w-full max-w-3xl rounded-xl overflow-hidden shadow-2xl border-4 border-blue-200 bg-black">
             <iframe
@@ -80,13 +72,14 @@ export function ProblemSection() {
               src="https://www.youtube.com/embed/qDO8qDflCeE"
               frameBorder="0"
               allowFullScreen
-            ></iframe>
+            />
             <div className="absolute top-2 left-2 bg-blue-600 text-white text-xs px-3 py-1 rounded shadow">
               Demo Video
             </div>
           </div>
         </div>
 
+        {/* Current Manual Approach */}
         <div className="grid lg:grid-cols-2 gap-12 items-center mb-16">
           <motion.div
             initial={{ opacity: 0, x: -20 }}
@@ -95,16 +88,10 @@ export function ProblemSection() {
           >
             <h3 className="text-2xl mb-6">Current Manual Approach</h3>
             <p className="text-muted-foreground mb-6 leading-relaxed">
-              Train traffic controllers decide which train should move first,
-              which should wait, and how to reroute trains when problems arise.
-              This system has worked because controllers rely on years of
-              experience and intuition.
+              Train traffic controllers decide which train should move first, which should wait, and how to reroute trains when problems arise. This system has worked because controllers rely on years of experience and intuition.
             </p>
             <p className="text-muted-foreground leading-relaxed">
-              However, as traffic continues to grow, this manual approach is
-              struggling to keep up. The network has limited resources and
-              countless types of trains with different priorities that must be
-              coordinated across time and space while ensuring safety.
+              However, as traffic continues to grow, this manual approach is struggling to keep up. The network has limited resources and countless types of trains with different priorities that must be coordinated across time and space while ensuring safety.
             </p>
           </motion.div>
 
@@ -122,6 +109,7 @@ export function ProblemSection() {
           </motion.div>
         </div>
 
+        {/* Challenges Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
           {challenges.map((challenge, index) => {
             const IconComponent = challenge.icon;
@@ -150,15 +138,13 @@ export function ProblemSection() {
           })}
         </div>
 
+        {/* Alert Section */}
         <div className="mt-16 bg-red-50 border border-red-200 rounded-lg p-8">
           <div className="text-center">
             <AlertTriangle className="h-12 w-12 text-red-600 mx-auto mb-4" />
             <h3 className="text-xl mb-4 text-red-800">The Real Challenge</h3>
             <p className="text-red-700 leading-relaxed max-w-3xl mx-auto">
-              This is not a simple puzzle it's a large-scale combinatorial
-              optimization problem. One wrong decision can cause delays across
-              the entire system. While human expertise is invaluable, it's no
-              longer sufficient for today's scale of operations.
+              This is not a simple puzzle—it's a large-scale combinatorial optimization problem. One wrong decision can cause delays across the entire system. While human expertise is invaluable, it's no longer sufficient for today's scale of operations.
             </p>
           </div>
         </div>

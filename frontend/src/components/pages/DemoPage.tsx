@@ -2,12 +2,12 @@ import { useState } from "react";
 import { Button } from "../ui/button";
 import { Card, CardContent } from "../ui/card";
 import { Play, Pause, Volume2, Maximize2, ArrowLeft, Clock, Users, TrendingUp } from "lucide-react";
-import { useRouter } from "../Router";
+import { useNavigate } from "react-router-dom";
 import { motion } from "motion/react";
 
 export function DemoPage() {
   const [isPlaying, setIsPlaying] = useState(false);
-  const { navigate } = useRouter();
+  const navigate = useNavigate();
 
   const features = [
     {
@@ -41,7 +41,7 @@ export function DemoPage() {
           className="text-center mb-12"
         >
           <button
-            onClick={() => navigate('home')}
+            onClick={() => navigate('/')}
             className="inline-flex items-center text-primary hover:text-primary/80 mb-6"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
@@ -58,7 +58,6 @@ export function DemoPage() {
         </motion.div>
 
         <div className="grid lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
-          {/* Video Player */}
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -68,7 +67,6 @@ export function DemoPage() {
             <Card className="overflow-hidden shadow-2xl">
               <CardContent className="p-0">
                 <div className="relative bg-gray-900 aspect-video">
-                  {/* Video Placeholder */}
                   <div className="absolute inset-0 bg-gradient-to-br from-blue-900 to-indigo-900 flex items-center justify-center">
                     <div className="text-center text-white">
                       <div className="bg-white/20 rounded-full p-8 mb-4 mx-auto w-fit">
@@ -78,8 +76,6 @@ export function DemoPage() {
                       <p className="text-blue-100">Complete system walkthrough • 4:30 minutes</p>
                     </div>
                   </div>
-                  
-                  {/* Video Controls */}
                   <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-6">
                     <div className="flex items-center space-x-4">
                       <motion.button
@@ -90,13 +86,10 @@ export function DemoPage() {
                       >
                         {isPlaying ? <Pause className="h-6 w-6" /> : <Play className="h-6 w-6" />}
                       </motion.button>
-                      
                       <div className="flex-1 bg-white/20 rounded-full h-2 relative">
                         <div className="bg-white h-2 rounded-full w-1/3"></div>
                       </div>
-                      
                       <span className="text-white text-sm">1:30 / 4:30</span>
-                      
                       <Volume2 className="h-5 w-5 text-white" />
                       <Maximize2 className="h-5 w-5 text-white" />
                     </div>
@@ -104,8 +97,6 @@ export function DemoPage() {
                 </div>
               </CardContent>
             </Card>
-            
-            {/* Video Description */}
             <motion.div 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -134,15 +125,12 @@ export function DemoPage() {
               </div>
             </motion.div>
           </motion.div>
-
-          {/* Sidebar */}
           <motion.div 
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.3 }}
             className="space-y-6"
           >
-            {/* CTA Card */}
             <Card className="bg-gradient-to-br from-blue-600 to-indigo-600 text-white border-0">
               <CardContent className="p-6">
                 <h3 className="text-xl font-semibold mb-3">Ready to Get Started?</h3>
@@ -151,7 +139,7 @@ export function DemoPage() {
                 </p>
                 <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
                   <Button 
-                    onClick={() => navigate('signup')}
+                    onClick={() => navigate('/signup')}
                     className="w-full bg-white text-blue-600 hover:bg-blue-50"
                   >
                     Start Free Trial
@@ -159,8 +147,6 @@ export function DemoPage() {
                 </motion.div>
               </CardContent>
             </Card>
-
-            {/* Stats Card */}
             <Card>
               <CardContent className="p-6">
                 <h3 className="font-semibold mb-4">System Performance</h3>
@@ -172,7 +158,6 @@ export function DemoPage() {
                     </div>
                     <span className="font-medium">&lt; 2 seconds</span>
                   </div>
-                  
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-2">
                       <Users className="h-4 w-4 text-blue-600" />
@@ -180,7 +165,6 @@ export function DemoPage() {
                     </div>
                     <span className="font-medium">2,500+</span>
                   </div>
-                  
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-2">
                       <TrendingUp className="h-4 w-4 text-purple-600" />
@@ -191,8 +175,6 @@ export function DemoPage() {
                 </div>
               </CardContent>
             </Card>
-
-            {/* Contact Card */}
             <Card>
               <CardContent className="p-6">
                 <h3 className="font-semibold mb-3">Need a Custom Demo?</h3>
@@ -203,7 +185,7 @@ export function DemoPage() {
                   <Button 
                     variant="outline" 
                     className="w-full"
-                    onClick={() => navigate('contact')}
+                    onClick={() => navigate('/contact')}
                   >
                     Schedule Demo
                   </Button>

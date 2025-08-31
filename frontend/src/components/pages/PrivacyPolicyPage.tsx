@@ -2,11 +2,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
 import { Shield, Eye, Database, Lock, Users, FileText } from "lucide-react";
-import { useRouter } from "../Router";
 import { motion } from "motion/react";
+import { useNavigate } from "react-router-dom"; // <-- updated
 
 export function PrivacyPolicyPage() {
-  const { navigate } = useRouter();
+  const navigate = useNavigate(); // <-- updated
 
   const sections = [
     {
@@ -208,13 +208,13 @@ export function PrivacyPolicyPage() {
               viewport={{ once: true }}
               className="flex flex-col sm:flex-row gap-4 justify-center"
             >
-              <Button variant="outline" onClick={() => navigate('terms-of-service')}>
+              <Button variant="outline" onClick={() => navigate('/terms-of-service')}>
                 Terms of Service
               </Button>
-              <Button variant="outline" onClick={() => navigate('cookie-policy')}>
+              <Button variant="outline" onClick={() => navigate('/cookie-policy')}>
                 Cookie Policy
               </Button>
-              <Button onClick={() => navigate('home')}>
+              <Button onClick={() => navigate('/home')}>
                 Back to Home
               </Button>
             </motion.div>

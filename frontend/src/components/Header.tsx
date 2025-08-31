@@ -1,47 +1,52 @@
 import { Button } from "./ui/button";
 import { Train, Menu, X } from "lucide-react";
-import { useRouter } from "./Router";
 import { motion } from "motion/react";
 import { useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 
 export function Header() {
-  const { currentPage, navigate } = useRouter();
+  const navigate = useNavigate();
+  const location = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
+  // use pathname instead of currentPage
+  const currentPage = location.pathname;
+
   const navItems = [
-    { label: "Problem", page: "problem-statement" as const },
-    { label: "Solution", page: "ai-optimization" as const },
-    { label: "Features", page: "system-features" as const },
-    { label: "Benefits", page: "benefits" as const },
+    { label: "Problem", path: "/problem-statement" },
+    { label: "Solution", path: "/solution" },
+    { label: "Features", path: "/features" },
+    { label: "Benefits", path: "/benefits" },
   ];
 
   return (
-    <motion.header 
+    <motion.header
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50"
     >
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
-          <motion.div 
+          <motion.div
             className="flex items-center space-x-2 cursor-pointer"
-            onClick={() => navigate('home')}
+            onClick={() => navigate("/")}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
             <Train className="h-8 w-8 text-primary" />
             <span className="text-xl font-semibold">RailOptimize</span>
           </motion.div>
-          
+
+          {/* Desktop nav */}
           <nav className="hidden md:flex items-center space-x-8">
             {navItems.map((item) => (
               <motion.button
-                key={item.page}
-                onClick={() => navigate(item.page)}
+                key={item.path}
+                onClick={() => navigate(item.path)}
                 className={`text-sm transition-colors ${
-                  currentPage === item.page 
-                    ? 'text-foreground font-medium' 
-                    : 'text-muted-foreground hover:text-foreground'
+                  currentPage === item.path
+                    ? "text-foreground font-medium"
+                    : "text-muted-foreground hover:text-foreground"
                 }`}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -50,34 +55,25 @@ export function Header() {
               </motion.button>
             ))}
           </nav>
-          
+
           <div className="flex items-center space-x-4">
-            <motion.div
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={() => navigate('demo')}
-              >
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <Button variant="outline" size="sm" onClick={() => navigate("/demo")}>
                 Watch Demo
               </Button>
             </motion.div>
-            
-            <motion.div
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <Button 
+
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <Button
                 size="sm"
-                onClick={() => navigate('signup')}
+                onClick={() => navigate("/signup")}
                 className="bg-blue-600 hover:bg-blue-700"
               >
                 Get Started
               </Button>
             </motion.div>
 
+            {/* Mobile menu button */}
             <button
               className="md:hidden p-2"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -91,22 +87,22 @@ export function Header() {
         {isMenuOpen && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
+            animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
             className="md:hidden border-t py-4"
           >
             <div className="flex flex-col space-y-4">
               {navItems.map((item) => (
                 <button
-                  key={item.page}
+                  key={item.path}
                   onClick={() => {
-                    navigate(item.page);
+                    navigate(item.path);
                     setIsMenuOpen(false);
                   }}
                   className={`text-left text-sm transition-colors ${
-                    currentPage === item.page 
-                      ? 'text-foreground font-medium' 
-                      : 'text-muted-foreground hover:text-foreground'
+                    currentPage === item.path
+                      ? "text-foreground font-medium"
+                      : "text-muted-foreground hover:text-foreground"
                   }`}
                 >
                   {item.label}

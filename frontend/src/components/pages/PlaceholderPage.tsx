@@ -2,8 +2,8 @@ import { Button } from "../ui/button";
 import { Card, CardContent } from "../ui/card";
 import { Badge } from "../ui/badge";
 import { Construction, ArrowLeft } from "lucide-react";
-import { useRouter } from "../Router";
 import { motion } from "motion/react";
+import { useNavigate } from "react-router-dom"; // <-- use this instead
 
 interface PlaceholderPageProps {
   title: string;
@@ -12,7 +12,7 @@ interface PlaceholderPageProps {
 }
 
 export function PlaceholderPage({ title, description, badgeText = "Coming Soon" }: PlaceholderPageProps) {
-  const { navigate } = useRouter();
+  const navigate = useNavigate();
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center px-4">
@@ -43,13 +43,13 @@ export function PlaceholderPage({ title, description, badgeText = "Coming Soon" 
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                <Button onClick={() => navigate('home')}>
+                <Button onClick={() => navigate("/home")}>
                   <ArrowLeft className="mr-2 h-4 w-4" />
                   Back to Home
                 </Button>
               </motion.div>
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                <Button variant="outline" onClick={() => navigate('contact')}>
+                <Button variant="outline" onClick={() => navigate("/contact")}>
                   Contact Us
                 </Button>
               </motion.div>

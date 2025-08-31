@@ -10,19 +10,16 @@ import {
   Clock, 
   Target, 
   Users,
-  CheckCircle,
-  ArrowRight,
-  Train,
-  Layers,
   Database,
-  Settings
+  Layers,
+  Settings,
+  ArrowRight
 } from "lucide-react";
-import { useRouter } from "../Router";
+import { useNavigate } from "react-router-dom";
 import { motion } from "motion/react";
-import { ImageWithFallback } from "../figma/ImageWithFallback";
 
 export function LearnMorePage() {
-  const { navigate } = useRouter();
+  const navigate = useNavigate();
 
   const features = [
     {
@@ -79,8 +76,7 @@ export function LearnMorePage() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-blue-50 via-background to-indigo-50 dark:from-background dark:via-background dark:to-background py-20">
+      <section className="relative overflow-hidden bg-gradient-to-br from-blue-50 via-background to-indigo-50 py-20">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -100,13 +96,13 @@ export function LearnMorePage() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                <Button size="lg" onClick={() => navigate('signup')}>
+                <Button size="lg" onClick={() => navigate('/signup')}>
                   Start Free Trial
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </motion.div>
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                <Button variant="outline" size="lg" onClick={() => navigate('contact')}>
+                <Button variant="outline" size="lg" onClick={() => navigate('/contact')}>
                   Schedule Demo
                 </Button>
               </motion.div>
@@ -115,7 +111,6 @@ export function LearnMorePage() {
         </div>
       </section>
 
-      {/* Technology Deep Dive */}
       <section className="py-20 bg-white dark:bg-background">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
@@ -164,7 +159,6 @@ export function LearnMorePage() {
             })}
           </div>
 
-          {/* Architecture Diagram */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -198,7 +192,6 @@ export function LearnMorePage() {
         </div>
       </section>
 
-      {/* Measurable Impact */}
       <section className="py-20 bg-gradient-to-br from-green-50 to-blue-50 dark:from-background dark:to-background">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
@@ -207,9 +200,7 @@ export function LearnMorePage() {
             viewport={{ once: true }}
             className="max-w-3xl mx-auto text-center mb-16"
           >
-            <h2 className="text-3xl sm:text-4xl mb-6">
-              Proven Results
-            </h2>
+            <h2 className="text-3xl sm:text-4xl mb-6">Proven Results</h2>
             <p className="text-xl text-muted-foreground leading-relaxed">
               Real-world deployments show consistent improvements across all key metrics.
             </p>
@@ -229,12 +220,8 @@ export function LearnMorePage() {
                   <Card className="text-center bg-white dark:bg-card hover:shadow-lg transition-all hover:scale-105">
                     <CardContent className="p-6">
                       <IconComponent className="h-12 w-12 text-blue-600 mx-auto mb-4" />
-                      <div className="text-3xl font-bold text-blue-600 mb-2">
-                        {benefit.metric}
-                      </div>
-                      <div className="text-sm text-muted-foreground">
-                        {benefit.label}
-                      </div>
+                      <div className="text-3xl font-bold text-blue-600 mb-2">{benefit.metric}</div>
+                      <div className="text-sm text-muted-foreground">{benefit.label}</div>
                     </CardContent>
                   </Card>
                 </motion.div>
@@ -244,7 +231,6 @@ export function LearnMorePage() {
         </div>
       </section>
 
-      {/* Implementation Timeline */}
       <section className="py-20 bg-white dark:bg-background">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
@@ -253,9 +239,7 @@ export function LearnMorePage() {
             viewport={{ once: true }}
             className="max-w-3xl mx-auto text-center mb-16"
           >
-            <h2 className="text-3xl sm:text-4xl mb-6">
-              Implementation Process
-            </h2>
+            <h2 className="text-3xl sm:text-4xl mb-6">Implementation Process</h2>
             <p className="text-xl text-muted-foreground leading-relaxed">
               Our proven methodology ensures smooth deployment with minimal disruption to operations.
             </p>
@@ -287,7 +271,6 @@ export function LearnMorePage() {
         </div>
       </section>
 
-      {/* CTA Section */}
       <section className="py-20 bg-gradient-to-r from-blue-600 to-indigo-600">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
@@ -308,7 +291,7 @@ export function LearnMorePage() {
                 <Button 
                   size="lg" 
                   variant="secondary"
-                  onClick={() => navigate('contact')}
+                  onClick={() => navigate('/contact')}
                 >
                   Contact Sales Team
                 </Button>
@@ -318,7 +301,7 @@ export function LearnMorePage() {
                   size="lg" 
                   variant="outline"
                   className="border-white text-white hover:bg-white hover:text-blue-600"
-                  onClick={() => navigate('case-studies')}
+                  onClick={() => navigate('/case-studies')}
                 >
                   View Case Studies
                 </Button>

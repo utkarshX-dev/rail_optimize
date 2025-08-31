@@ -11,12 +11,12 @@ import {
   Zap,
   Shield,
 } from "lucide-react";
-import { useRouter } from "../Router";
 import { motion } from "motion/react";
 import { ImageWithFallback } from "../figma/ImageWithFallback";
+import { useNavigate } from "react-router-dom"; // <-- updated
 
 export function ProblemStatementPage() {
-  const { navigate } = useRouter();
+  const navigate = useNavigate(); // <-- updated
 
   const challenges = [
     {
@@ -86,8 +86,8 @@ export function ProblemStatementPage() {
               Critical Challenge Analysis
             </Badge>
             <h1 className="text-4xl sm:text-5xl lg:text-6xl mb-6">
-              The Growing Challenge of
-              <span className="text-red-600"> Railway Traffic Management</span>
+              The Growing Challenge of{" "}
+              <span className="text-red-600">Railway Traffic Management</span>
             </h1>
             <p className="text-xl text-muted-foreground mb-8 leading-relaxed">
               Indian Railways operates one of the world's largest train
@@ -99,7 +99,7 @@ export function ProblemStatementPage() {
         </div>
       </section>
 
-      {/* Current State */}
+      {/* Current State Video */}
       <div className="flex justify-center mb-12">
         <div className="relative w-full max-w-3xl rounded-xl overflow-hidden shadow-2xl border-4 border-blue-200 bg-black">
           <iframe
@@ -113,6 +113,8 @@ export function ProblemStatementPage() {
           </div>
         </div>
       </div>
+
+      {/* Current Manual Approach */}
       <section className="py-20 bg-white dark:bg-background">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-12 items-center mb-16">
@@ -121,9 +123,7 @@ export function ProblemStatementPage() {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
             >
-              <h2 className="text-3xl sm:text-4xl mb-6">
-                Current Manual Approach
-              </h2>
+              <h2 className="text-3xl sm:text-4xl mb-6">Current Manual Approach</h2>
               <p className="text-muted-foreground mb-6 leading-relaxed">
                 Train traffic controllers decide which train should move first,
                 which should wait, and how to reroute trains when problems
@@ -150,12 +150,8 @@ export function ProblemStatementPage() {
                       className="text-center p-4 bg-white border border-gray-200 rounded-lg"
                     >
                       <IconComponent className="h-8 w-8 text-blue-600 mx-auto mb-2" />
-                      <div className="font-semibold text-gray-900 text-lg">
-                        {stat.value}
-                      </div>
-                      <div className="text-sm text-muted-foreground">
-                        {stat.label}
-                      </div>
+                      <div className="font-semibold text-gray-900 text-lg">{stat.value}</div>
+                      <div className="text-sm text-muted-foreground">{stat.label}</div>
                     </motion.div>
                   );
                 })}
@@ -176,12 +172,8 @@ export function ProblemStatementPage() {
               <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent rounded-lg"></div>
               <div className="absolute bottom-4 left-4 bg-white/90 backdrop-blur rounded-lg p-3">
                 <div className="text-sm">
-                  <div className="font-medium text-red-600">
-                    Current Challenge
-                  </div>
-                  <div className="text-muted-foreground">
-                    20,000+ daily train movements
-                  </div>
+                  <div className="font-medium text-red-600">Current Challenge</div>
+                  <div className="text-muted-foreground">20,000+ daily train movements</div>
                 </div>
               </div>
             </motion.div>
@@ -189,6 +181,7 @@ export function ProblemStatementPage() {
         </div>
       </section>
 
+      {/* Core Challenges */}
       <section className="py-20 bg-gray-50 dark:bg-gray-900">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
@@ -197,9 +190,7 @@ export function ProblemStatementPage() {
             viewport={{ once: true }}
             className="max-w-3xl mx-auto text-center mb-16"
           >
-            <h2 className="text-3xl text-white sm:text-4xl mb-6">
-              Core Challenges
-            </h2>
+            <h2 className="text-3xl text-white sm:text-4xl mb-6">Core Challenges</h2>
             <p className="text-xl text-muted-foreground leading-relaxed">
               The complexity of modern railway operations has outgrown manual
               management capabilities, creating multiple interconnected
@@ -222,9 +213,7 @@ export function ProblemStatementPage() {
                     <CardContent className="p-6">
                       <div className="flex items-start space-x-4">
                         <div className="bg-red-100 dark:bg-red-900 p-3 rounded-lg flex-shrink-0">
-                          <IconComponent
-                            className={`h-6 w-6 ${challenge.color}`}
-                          />
+                          <IconComponent className={`h-6 w-6 ${challenge.color}`} />
                         </div>
                         <div>
                           <h3 className="text-xl mb-3">{challenge.title}</h3>
@@ -256,12 +245,9 @@ export function ProblemStatementPage() {
             viewport={{ once: true }}
             className="max-w-3xl mx-auto text-center mb-16"
           >
-            <h2 className="text-3xl sm:text-4xl mb-6">
-              Operational Pain Points
-            </h2>
+            <h2 className="text-3xl sm:text-4xl mb-6">Operational Pain Points</h2>
             <p className="text-xl text-muted-foreground leading-relaxed">
-              Daily operational challenges that highlight the need for
-              intelligent automation.
+              Daily operational challenges that highlight the need for intelligent automation.
             </p>
           </motion.div>
 
@@ -291,10 +277,9 @@ export function ProblemStatementPage() {
           <AlertTriangle className="h-12 w-12 text-red-600 mx-auto mb-4" />
           <h3 className="text-xl mb-4 text-red-800">The Real Challenge</h3>
           <p className="text-red-700 leading-relaxed max-w-3xl mx-auto">
-            This is not a simple puzzle it's a large-scale combinatorial
-            optimization problem. One wrong decision can cause delays across the
-            entire system. While human expertise is invaluable, it's no longer
-            sufficient for today's scale of operations.
+            This is not a simple puzzle; it's a large-scale combinatorial optimization problem. One
+            wrong decision can cause delays across the entire system. While human expertise is
+            invaluable, it's no longer sufficient for today's scale of operations.
           </p>
         </div>
       </div>
