@@ -1,4 +1,10 @@
-import { BrowserRouter as Router, Routes, Route, Outlet, useLocation } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Outlet,
+  useLocation,
+} from "react-router-dom";
 
 import { ThemeProvider } from "./components/ThemeProvider";
 import { Header } from "./components/Header";
@@ -19,15 +25,17 @@ import { PrivacyPolicyPage } from "./components/pages/PrivacyPolicyPage";
 import { ContactPage } from "./components/pages/ContactPage";
 import { PlaceholderPage } from "./components/pages/PlaceholderPage";
 
-// Layout Component
 function Layout() {
   const location = useLocation();
-  const hideHeaderFooter = location.pathname === "/login" || location.pathname === "/signup";
+  const hideHeaderFooter =
+    location.pathname === "/login" || location.pathname === "/signup";
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen flex flex-col bg-background">
       {!hideHeaderFooter && <Header />}
-      <Outlet /> 
+      <div className="flex-1">
+        <Outlet />
+      </div>
       {!hideHeaderFooter && <Footer />}
     </div>
   );
@@ -39,13 +47,9 @@ export default function App() {
       <ThemeProvider>
         <Router>
           <Routes>
-            {/* Auth routes without header/footer */}
             <Route path="/login" element={<LoginPage />} />
             <Route path="/signup" element={<SignupPage />} />
-
-            {/* Routes with header/footer */}
             <Route element={<Layout />}>
-              {/* Home Page */}
               <Route
                 path="/"
                 element={
@@ -59,16 +63,19 @@ export default function App() {
                 }
               />
 
-              {/* Main Pages */}
+             
               <Route path="/demo" element={<DemoPage />} />
               <Route path="/learn-more" element={<LearnMorePage />} />
-              <Route path="/problem-statement" element={<ProblemStatementPage />} />
+              <Route
+                path="/problem-statement"
+                element={<ProblemStatementPage />}
+              />
               <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
               <Route path="/contact" element={<ContactPage />} />
               <Route path="/features" element={<FeaturesSection />} />
               <Route path="/solution" element={<SolutionSection />} />
               <Route path="/benefits" element={<BenefitsSection />} />
-              {/* Placeholder Pages */}
+              
               <Route
                 path="/terms-of-service"
                 element={
