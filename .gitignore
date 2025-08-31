@@ -1,6 +1,17 @@
-/node_modules
-/.env
-/.next
-/out
-/build
-/dist
+# Frontend
+/frontend/node_modules
+/frontend/.next
+/frontend/out
+/frontend/build
+/frontend/dist
+
+# Backend
+/backend/node_modules
+/backend/dist
+
+# Environment variables
+.env
+
+# Misc
+.DS_Store
+*.pem
