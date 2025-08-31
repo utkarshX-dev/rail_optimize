@@ -44,7 +44,7 @@ export function SignupPage() {
     try {
       const response = await signInWithPopup(auth, provider);
       const { displayName, email, uid } = response.user;
-      await handleLogin({ name: displayName, email, googleId: uid });
+      await handleLogin({ name: displayName || "", email: email || "", password: null, googleId: uid || "" });
     } catch (error) {
       console.error("Google signup failed:", error);
     }
