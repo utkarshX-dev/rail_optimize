@@ -1,11 +1,11 @@
 import userContext from "../context/userContext";
 import { useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-function DashboardApp() {
+export default function DashboardApp() {
     const navigate = useNavigate();
-    const {user} = useContext(userContext)!;
+    const {token} = useContext(userContext)!;
     useEffect(() => {
-        if (!user) {
+        if (!token) {
             navigate("/");
         }
     }, [navigate]);
@@ -13,9 +13,7 @@ function DashboardApp() {
     return (
         <div>
             <h1>Dashboard</h1>
-            
         </div>
     );
 }
 
-export default DashboardApp;

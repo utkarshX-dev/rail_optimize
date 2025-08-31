@@ -1,4 +1,4 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { auth, provider } from "../../../utils/firebase.js";
@@ -16,9 +16,13 @@ export function SignupPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({ username: "", name: "", password: "" });
   const [msg, setMsg] = useState<string | null>(null);
-  const { setToken } = useContext(UserContext);
+  const { token, setToken } = useContext(UserContext);
   const navigate = useNavigate();
-
+  useEffect(() => {
+    if (token) {
+      navigate("/dashboard");
+    }
+  }, [token, navigate]);
   const updateFormData = (field: string, value: string) =>
     setFormData(prev => ({ ...prev, [field]: value }));
 
@@ -28,7 +32,7 @@ export function SignupPage() {
       const { token } = res.data;
       setToken?.(token);
       setMsg(null);
-      navigate("/profile");
+      navigate("/dashboard");
     } catch (error: any) {
       setMsg(error?.response?.data?.message || "Signup failed. Please try again.");
       console.error("Signup failed:", error);

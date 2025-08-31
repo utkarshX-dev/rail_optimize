@@ -1,4 +1,4 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { auth, provider } from "../../../utils/firebase.js";
@@ -16,8 +16,14 @@ export function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [msg, setMsg] = useState<string | null>(null);
-  const { setToken } = useContext(UserContext);
+  const { token, setToken } = useContext(UserContext);
+
   const navigate = useNavigate();
+  useEffect(() => {
+    if (token) {
+      navigate("/dashboard");
+    }
+  }, [token, navigate]);
 
   const handleLogin = async ({ name, email, password, googleId }: { name?: string; email: string; password?: string | null; googleId?: string }) => {
     try {
@@ -25,7 +31,7 @@ export function LoginPage() {
       const { token } = res.data;
       setToken?.(token);
       setMsg(null);
-      navigate("/profile");
+      navigate("/dashboard");
     } catch (error: any) {
       setMsg(error?.response?.data?.message || "Login failed. Please try again.");
       console.error("Login failed:", error);

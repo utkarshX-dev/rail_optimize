@@ -24,6 +24,7 @@ import { ProblemStatementPage } from "./components/pages/ProblemStatementPage";
 import { PrivacyPolicyPage } from "./components/pages/PrivacyPolicyPage";
 import { ContactPage } from "./components/pages/ContactPage";
 import { PlaceholderPage } from "./components/pages/PlaceholderPage";
+import DashboardApp from "./dashboard/DashboardApp";
 
 function Layout() {
   const location = useLocation();
@@ -63,7 +64,6 @@ export default function App() {
                 }
               />
 
-             
               <Route path="/demo" element={<DemoPage />} />
               <Route path="/learn-more" element={<LearnMorePage />} />
               <Route
@@ -75,7 +75,8 @@ export default function App() {
               <Route path="/features" element={<FeaturesSection />} />
               <Route path="/solution" element={<SolutionSection />} />
               <Route path="/benefits" element={<BenefitsSection />} />
-              
+              <Route path="/dashboard" element={<DashboardApp />} />
+
               <Route
                 path="/terms-of-service"
                 element={

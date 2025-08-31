@@ -11,9 +11,10 @@ const UserContext = createContext<UserContextType>({
 });
 
 export const UserProvider = ({ children }: { children: ReactNode }) => {
-  const [token, setToken] = useState<string | null>(
-    localStorage.getItem("session-token")
-  );
+  const [token, setToken] = useState<string | null>(() => {
+    const storedToken = localStorage.getItem("session-token");
+    return storedToken ? storedToken : null;
+  });
 
   useEffect(() => {
     if (token) localStorage.setItem("session-token", token);
