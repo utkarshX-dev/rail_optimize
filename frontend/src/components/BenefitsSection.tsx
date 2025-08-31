@@ -85,7 +85,7 @@ export function BenefitsSection() {
     "Comprehensive audit trails for compliance",
     "User-friendly interface with minimal training required"
   ];
-
+  console.log("BenefitsSection rendered");
   return (
     <section id="benefits" className="py-20 bg-gradient-to-br from-slate-50 to-blue-50">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">

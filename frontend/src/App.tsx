@@ -8,7 +8,7 @@ import { FeaturesSection } from "./components/FeaturesSection";
 import { BenefitsSection } from "./components/BenefitsSection";
 import { Footer } from "./components/Footer";
 
-// Import pages
+import { UserProvider } from "./context/userContext";
 import { LoginPage } from "./components/pages/LoginPage";
 import { SignupPage } from "./components/pages/SignupPage";
 import { DemoPage } from "./components/pages/DemoPage";
@@ -144,10 +144,12 @@ function AppContent() {
 
 export default function App() {
   return (
-    <ThemeProvider>
-      <Router>
-        <AppContent />
-      </Router>
-    </ThemeProvider>
+    <UserProvider>
+      <ThemeProvider>
+        <Router>
+          <AppContent />
+        </Router>
+      </ThemeProvider>
+    </UserProvider>
   );
 }
