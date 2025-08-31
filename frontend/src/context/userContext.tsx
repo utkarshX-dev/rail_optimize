@@ -1,29 +1,30 @@
-import { createContext } from "react";
-import { useState } from "react";
+import { createContext, useState, ReactNode, useEffect } from "react";
 
-type User = {
-    name: string;
-    email: string;
-    age: number | null;
+interface UserContextType {
+  token: string | null;
+  setToken: (token: string | null) => void;
+}
+
+const UserContext = createContext<UserContextType>({
+  token: null,
+  setToken: () => {},
+});
+
+export const UserProvider = ({ children }: { children: ReactNode }) => {
+  const [token, setToken] = useState<string | null>(
+    localStorage.getItem("session-token")
+  );
+
+  useEffect(() => {
+    if (token) localStorage.setItem("session-token", token);
+    else localStorage.removeItem("session-token");
+  }, [token]);
+
+  return (
+    <UserContext.Provider value={{ token, setToken }}>
+      {children}
+    </UserContext.Provider>
+  );
 };
 
-const userContext = createContext<{
-    user: User;
-    setUser: React.Dispatch<React.SetStateAction<User>>;
-} | undefined>(undefined);
-
-export const UserProvider = ({ children }: { children: React.ReactNode }) => {
-    const [user, setUser] = useState<User>({
-        name: "",
-        email: "",
-        age: null
-    });
-
-    return (
-        <userContext.Provider value={{ user, setUser }}>
-            {children}
-        </userContext.Provider>
-    );
-};
-
-export default userContext;
+export default UserContext;
