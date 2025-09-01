@@ -89,7 +89,6 @@ export function SignupPage() {
                       <Input id="username" type="email" placeholder="Enter your email" value={formData.username} onChange={(e) => updateFormData("username", e.target.value)} required className="pl-10 h-12" />
                     </div>
                   </div>
-
                   <div className="space-y-2">
                     <Label htmlFor="name" className="text-sm font-medium">Full Name</Label>
                     <div className="relative">
