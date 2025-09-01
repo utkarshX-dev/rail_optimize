@@ -108,10 +108,18 @@ export function SignupPage() {
                       </button>
                     </div>
                   </div>
+              
+                  <div>
+                    <input type="checkbox" id="terms" required className="mr-2" />
+                    <label htmlFor="terms" className="text-sm text-gray-600">I agree to the <a href="/privacy-policy" className="text-blue-600">Terms</a> and <a href="/privacy-policy" className="text-blue-600">Conditions</a></label>
+                  </div>
 
                   <Button type="submit" className="w-full h-12 text-base bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700">Create Account <ArrowRight className="ml-2 h-4 w-4" /></Button>
                 </form>
-
+                <div className="my-4 text-center">
+                    <hr />
+                    or
+                </div>
                 <Button
                   type="button"
                   variant="outline"

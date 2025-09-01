@@ -105,6 +105,10 @@ export function LoginPage() {
                   <Button type="submit" className="w-full h-12">Sign In</Button>
                 </form>
                 
+                <div className="mt-4 text-center">
+                  <hr />
+                  <p className="">or</p>
+                </div>
                 <Button
                   type="button"
                   variant="outline"
