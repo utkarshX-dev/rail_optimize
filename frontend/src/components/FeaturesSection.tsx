@@ -127,7 +127,7 @@ export function FeaturesSection() {
           <Badge variant="outline" className="mb-4 bg-blue-50 text-blue-700 border-blue-200">
             System Capabilities
           </Badge>
-          <h2 className="text-3xl sm:text-4xl mb-6">
+          <h2 className="text-3xl sm:text-3xl font-extrabold mb-6">
             Comprehensive Railway Management Features
           </h2>
           <p className="text-xl text-muted-foreground leading-relaxed">

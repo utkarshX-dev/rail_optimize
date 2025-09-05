@@ -58,7 +58,7 @@ export function ProblemSection() {
           viewport={{ once: true }}
           className="max-w-3xl mx-auto text-center mb-16"
         >
-          <h2 className="text-3xl sm:text-4xl mb-6">The Challenge Facing Indian Railways</h2>
+          <h2 className="text-3xl sm:text-4xl mb-6 font-extrabold">The Challenge Facing Indian Railways</h2>
           <p className="text-xl text-muted-foreground leading-relaxed">
             Indian Railways operates one of the world's largest train networks. Every day, thousands of passenger and freight trains share the same infrastructure, creating an incredibly complex coordination challenge.
           </p>
@@ -86,7 +86,7 @@ export function ProblemSection() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
           >
-            <h3 className="text-2xl mb-6">Current Manual Approach</h3>
+            <h3 className="text-2xl mb-6 font-extrabold">Current Manual Approach</h3>
             <p className="text-muted-foreground mb-6 leading-relaxed">
               Train traffic controllers decide which train should move first, which should wait, and how to reroute trains when problems arise. This system has worked because controllers rely on years of experience and intuition.
             </p>

@@ -31,26 +31,13 @@ export function HeroSection() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="text-5xl sm:text-6xl lg:text-7xl tracking-tight mb-6"
+            className="text-5xl sm:text-6xl lg:text-4xl tracking-tight mb-6"
           >
             Transform Indian Railways with{" "}
-            <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-black to-zinc-600 bg-clip-text text-transparent font-extrabold">
               AI Intelligence
             </span>
           </motion.h1>
-
-          {/* Subtitle */}
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="text-xl text-muted-foreground mb-10 leading-relaxed max-w-3xl mx-auto"
-          >
-            Move from manual, experience-driven train control to intelligent, data-driven operations. 
-            Our AI optimization system reduces delays by 40% and increases efficiency by 60%.
-          </motion.p>
-
-          {/* CTA Buttons */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -60,7 +47,7 @@ export function HeroSection() {
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <Button
                 size="lg"
-                className="text-lg px-8 py-6 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
+                className="text-lg px-8 py-6 bg-black text-white hover:bg-zinc-700"
                 onClick={() => navigate("/signup")}
               >
                 Get Started
@@ -106,7 +93,6 @@ export function HeroSection() {
           </motion.div>
         </div>
 
-        {/* Hero Image with floating stats */}
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
@@ -147,7 +133,6 @@ export function HeroSection() {
           </div>
         </motion.div>
 
-        {/* Bottom CTA */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.7 }} className="text-center mt-16">
           <p className="text-muted-foreground mb-4">Join 500+ railway professionals already using RailOptimize</p>
           <div className="flex items-center justify-center space-x-2 text-sm text-muted-foreground">

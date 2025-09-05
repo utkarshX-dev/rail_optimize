@@ -1,5 +1,5 @@
 import { Button } from "./ui/button";
-import { Train, Menu, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { motion } from "motion/react";
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -8,8 +8,6 @@ export function Header() {
   const navigate = useNavigate();
   const location = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-  // use pathname instead of currentPage
   const currentPage = location.pathname;
 
   const navItems = [
@@ -31,13 +29,11 @@ export function Header() {
             className="flex items-center space-x-2 cursor-pointer"
             onClick={() => navigate("/")}
             whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
           >
-            <Train className="h-8 w-8 text-primary" />
-            <span className="text-xl font-semibold">RailOptimize</span>
+            <span className="text-2xl font-extrabold transition">RailOptimize</span>
           </motion.div>
 
-          {/* Desktop nav */}
+          
           <nav className="hidden md:flex items-center space-x-8">
             {navItems.map((item) => (
               <motion.button
@@ -67,7 +63,7 @@ export function Header() {
               <Button
                 size="sm"
                 onClick={() => navigate("/signup")}
-                className="bg-blue-600 hover:bg-blue-700"
+                className="bg-black text-white hover:bg-zinc-700"
               >
                 Get Started
               </Button>

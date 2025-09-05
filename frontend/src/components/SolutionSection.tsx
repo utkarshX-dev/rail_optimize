@@ -42,10 +42,10 @@ export function SolutionSection() {
           className="max-w-3xl mx-auto text-center mb-16"
         >
           <Badge variant="outline" className="mb-4 bg-white">
-            Intelligent Decision-Support System
+            Intelligent Realtime Decision Support System
           </Badge>
-          <h2 className="text-3xl sm:text-4xl mb-6">
-            The Solution: AI-Powered Railway Management
+          <h2 className="text-3xl sm:text-4xl mb-6 text-emerald-800 font-extrabold">
+            AI-Powered Railway Management
           </h2>
           <p className="text-xl text-muted-foreground leading-relaxed">
             An intelligent decision-support system that combines operations research with 
@@ -63,14 +63,14 @@ export function SolutionSection() {
             <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent rounded-lg"></div>
             <div className="absolute bottom-4 left-4 bg-white/90 backdrop-blur rounded-lg p-3">
               <div className="text-sm">
-                <div className="font-medium text-emerald-600">System Status: Active</div>
-                <div className="text-muted-foreground">Processing 2,847 trains</div>
+                <div className="font-semibold text-emerald-600">Get Real-Time Insights</div>
+                <div className="text-muted-foreground">Automating the if scenarios</div>
               </div>
             </div>
           </div>
           
           <div>
-            <h3 className="text-2xl mb-6">From Manual to Intelligent</h3>
+            <h3 className="text-4xl mb-6 text-blue-500 font-extrabold">From Manual to Intelligent</h3>
             <p className="text-muted-foreground mb-6 leading-relaxed">
               The system transforms railway operations by moving from a manual, experience-driven 
               approach to a data-driven, intelligent, and adaptive system.
@@ -113,16 +113,16 @@ export function SolutionSection() {
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
               >
-                <Card className="bg-white border-2 hover:shadow-lg transition-all hover:scale-105">
-                  <CardContent className="p-6">
+                <Card className="bg-white border-2 hover:shadow-lg transition-all hover:scale-105 h-full min-h-[260px] flex flex-col">
+                  <CardContent className="p-6 flex flex-col flex-1">
                     <div className="flex items-center justify-between mb-4">
-                      <IconComponent className="h-8 w-8 text-blue-600" />
-                      <Badge variant="secondary" className="text-xs">
+                      <IconComponent className="h-8 w-8 text-black" />
+                      <Badge variant="secondary" className="text-xs text-blue-600">
                         {feature.badge}
                       </Badge>
                     </div>
-                    <h4 className="mb-3">{feature.title}</h4>
-                    <p className="text-sm text-muted-foreground leading-relaxed">
+                    <h4 className="mb-3 text-emerald-400 font-bold">{feature.title}</h4>
+                    <p className="text-sm text-muted-foreground leading-relaxed flex-1">
                       {feature.description}
                     </p>
                   </CardContent>

@@ -50,6 +50,8 @@ export default function App() {
           <Routes>
             <Route path="/login" element={<LoginPage />} />
             <Route path="/signup" element={<SignupPage />} />
+
+            {/* Routes that use the shared Layout */}
             <Route element={<Layout />}>
               <Route
                 path="/"
@@ -63,20 +65,16 @@ export default function App() {
                   </main>
                 }
               />
-
               <Route path="/demo" element={<DemoPage />} />
               <Route path="/learn-more" element={<LearnMorePage />} />
-              <Route
-                path="/problem-statement"
-                element={<ProblemStatementPage />}
-              />
+              <Route path="/problem-statement" element={<ProblemStatementPage />} />
               <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
               <Route path="/contact" element={<ContactPage />} />
               <Route path="/features" element={<FeaturesSection />} />
               <Route path="/solution" element={<SolutionSection />} />
               <Route path="/benefits" element={<BenefitsSection />} />
-              <Route path="/dashboard" element={<DashboardApp />} />
 
+              {/* All the placeholder/info pages */}
               <Route
                 path="/terms-of-service"
                 element={
@@ -168,9 +166,13 @@ export default function App() {
                 }
               />
             </Route>
+
+            {/* Dashboard without Layout */}
+            <Route path="/dashboard" element={<DashboardApp />} />
           </Routes>
         </Router>
       </ThemeProvider>
     </UserProvider>
   );
 }
+

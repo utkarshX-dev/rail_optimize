@@ -36,6 +36,7 @@ export function LoginPage() {
       setMsg(error?.response?.data?.message || "Login failed. Please try again.");
       console.error("Login failed:", error);
     }
+    navigate("/dashboard");
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
