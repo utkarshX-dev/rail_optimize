@@ -5,7 +5,7 @@ import {
   Outlet,
   useLocation,
 } from "react-router-dom";
-
+import io from 'socket.io-client';
 import { ThemeProvider } from "./components/ThemeProvider";
 import { Header } from "./components/Header";
 import { HeroSection } from "./components/HeroSection";
@@ -14,7 +14,7 @@ import { SolutionSection } from "./components/SolutionSection";
 import { FeaturesSection } from "./components/FeaturesSection";
 import { BenefitsSection } from "./components/BenefitsSection";
 import { Footer } from "./components/Footer";
-
+import React, { useEffect, useState } from 'react';
 import { UserProvider } from "./context/userContext";
 import { LoginPage } from "./components/pages/LoginPage";
 import { SignupPage } from "./components/pages/SignupPage";
@@ -41,7 +41,6 @@ function Layout() {
     </div>
   );
 }
-
 export default function App() {
   return (
     <UserProvider>
