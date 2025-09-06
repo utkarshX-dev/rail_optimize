@@ -5,7 +5,10 @@ import {
   Outlet,
   useLocation,
 } from "react-router-dom";
-import io from 'socket.io-client';
+import Profile from "./dashboard/components/user/Profile.jsx";
+import DashboardLayout from "./dashboard/Dashboardlayout";
+import AddTrain from "./dashboard/components/ticket/AddTrain";
+import Stats from "./dashboard/components/Stats/Stats";
 import { ThemeProvider } from "./components/ThemeProvider";
 import { Header } from "./components/Header";
 import { HeroSection } from "./components/HeroSection";
@@ -14,7 +17,7 @@ import { SolutionSection } from "./components/SolutionSection";
 import { FeaturesSection } from "./components/FeaturesSection";
 import { BenefitsSection } from "./components/BenefitsSection";
 import { Footer } from "./components/Footer";
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import { UserProvider } from "./context/userContext";
 import { LoginPage } from "./components/pages/LoginPage";
 import { SignupPage } from "./components/pages/SignupPage";
@@ -24,7 +27,7 @@ import { ProblemStatementPage } from "./components/pages/ProblemStatementPage";
 import { PrivacyPolicyPage } from "./components/pages/PrivacyPolicyPage";
 import { ContactPage } from "./components/pages/ContactPage";
 import { PlaceholderPage } from "./components/pages/PlaceholderPage";
-import DashboardApp from "./dashboard/DashboardApp";
+import DashboardApp from "./dashboard/components/Dashboard/DashboardApp.tsx";
 
 function Layout() {
   const location = useLocation();
@@ -66,7 +69,10 @@ export default function App() {
               />
               <Route path="/demo" element={<DemoPage />} />
               <Route path="/learn-more" element={<LearnMorePage />} />
-              <Route path="/problem-statement" element={<ProblemStatementPage />} />
+              <Route
+                path="/problem-statement"
+                element={<ProblemStatementPage />}
+              />
               <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
               <Route path="/contact" element={<ContactPage />} />
               <Route path="/features" element={<FeaturesSection />} />
@@ -167,11 +173,16 @@ export default function App() {
             </Route>
 
             {/* Dashboard without Layout */}
-            <Route path="/dashboard" element={<DashboardApp />} />
+            <Route path="/dashboard" element={<DashboardLayout />}>
+              <Route index element={<DashboardApp />} />
+              <Route path="stats" element={<Stats />} />
+              <Route path="add-train" element={<AddTrain />} />
+              <Route path="profile" element={<Profile />} />
+              {/* Add more dashboard subpages here */}
+            </Route>
           </Routes>
         </Router>
       </ThemeProvider>
     </UserProvider>
   );
 }
-

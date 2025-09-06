@@ -4,16 +4,13 @@ import io from 'socket.io-client';
 
 const API_BASE = 'http://localhost:5000/api';
 
-// Simple Map Component without React Leaflet - using plain Leaflet
 const SimpleMapComponent = ({ trains = [], stations = {}, selectedTrain, setSelectedTrain }) => {
   const mapRef = useRef(null);
   const leafletMapRef = useRef(null);
   const markersRef = useRef({});
 
   useEffect(() => {
-    // Only initialize if we have stations and haven't initialized yet
     if (stations && Object.keys(stations).length > 0 && !leafletMapRef.current) {
-      // Dynamically import Leaflet to avoid SSR issues
       import('leaflet').then((L) => {
         // Fix marker icons
         delete L.Icon.Default.prototype._getIconUrl;
@@ -298,40 +295,8 @@ const TrainCoordinationDashboard = () => {
       console.error('Error adding train:', error);
     }
   };
-
-  return (
-    <div className="min-h-screen bg-gray-100">
-      {/* Header */}
-      <div className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <Train className="w-8 h-8 text-blue-600" />
-              <h1 className="text-2xl font-bold text-gray-900">
-                AI Train Coordination System
-              </h1>
-            </div>
-            <div className="flex items-center space-x-4">
-              <div className={`flex items-center space-x-2 px-3 py-1 rounded-full text-sm ${
-                isConnected ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-              }`}>
-                <div className={`w-2 h-2 rounded-full ${
-                  isConnected ? 'bg-green-500' : 'bg-red-500'
-                }`}></div>
-                <span>{isConnected ? 'Connected' : 'Disconnected'}</span>
-              </div>
-              <button
-                onClick={addNewTrain}
-                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
-                disabled={!isConnected}
-              >
-                Add Train
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
+    return (
+      <div className="min-h-screen bg-gray-100 pt-16">
       <div className="max-w-7xl mx-auto px-4 py-6">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Network Stats */}
@@ -380,11 +345,17 @@ const TrainCoordinationDashboard = () => {
           {/* Map */}
           <div className="lg:col-span-3">
             <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-              <div className="p-4 border-b">
+              <div className="p-4 border-b flex items-center justify-between">
                 <h2 className="text-lg font-semibold">Live Train Network</h2>
                 <p className="text-sm text-gray-600">
                   Showing {trains.length} trains, {conflicts.length} conflicts
                 </p>
+                <button
+                  onClick={addNewTrain}
+                  className="mt-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+                >
+                  Add Random Train
+                </button>
               </div>
               <SimpleMapComponent 
                 trains={trains}
@@ -536,4 +507,4 @@ const TrainCoordinationDashboard = () => {
   );
 };
 
-export default TrainCoordinationDashboard;
+export default TrainCoordinationDashboard;  
