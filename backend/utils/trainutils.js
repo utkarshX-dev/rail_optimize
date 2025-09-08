@@ -45,22 +45,34 @@ function detectConflicts() {
 }
 
 function coordinationLoop() {
-  console.log("Running train coordination loop...");
+  const now = Date.now();
+  const baseTravelTime = 5 * 60 * 1000;
 
   activeTrains.forEach((train) => {
-    if (train.nextStation) {
+    if (train.status === "completed") return;
+
+    if (!train.nextStation) {
+      train.status = "completed";
+      console.log(`Train ${train.id} completed its journey!`);
+      return;
+    }
+
+    const effectiveTravelTime = baseTravelTime + (train.delay || 0) * 60 * 1000;
+
+    if (!train.lastMoveTime || now - train.lastMoveTime >= effectiveTravelTime) {
       train.currentStation = train.nextStation;
       const nextIndex = train.route.indexOf(train.currentStation) + 1;
       train.nextStation = train.route[nextIndex] || null;
-      train.lastMoveTime = Date.now();
+      train.lastMoveTime = now;
 
-      // If train finished its route
       if (!train.nextStation) {
+        train.status = "completed";
         console.log(`Train ${train.id} completed its journey! Route: ${train.route.join(" -> ")}`);
       }
     }
   });
 }
+
 
 module.exports = {
   checkTrainConflict,

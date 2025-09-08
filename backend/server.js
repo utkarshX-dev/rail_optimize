@@ -1,12 +1,12 @@
 const dotenv = require("dotenv");
 dotenv.config();
-
 const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
 const http = require("http");
 const { Server } = require("socket.io");
 
+const { coordinationLoop } = require("./utils/trainutils.js");
 const { sampleTrains } = require("./data/trainData.js");
 const registerSocketHandlers = require("./socket.js");
 const trainRoutes = require("./routes/trainRoutes.js");
@@ -66,6 +66,18 @@ async function start() {
     };
     activeTrains.set(initialTrain.id, initialTrain);
   });
+setInterval(() => {
+  coordinationLoop();
+  console.log(
+    Array.from(activeTrains.values()).map(t => ({
+      id: t.id,
+      currentStation: t.currentStation,
+      nextStation: t.nextStation,
+      status: t.status,
+      delay: t.delay || 0, // show current delay in minutes
+    }))
+  );
+}, 5000);
 
   console.log(`Initialized ${activeTrains.size} trains`);
 
