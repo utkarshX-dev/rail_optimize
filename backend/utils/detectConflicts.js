@@ -1,11 +1,11 @@
 const activeTrains = require('../state.js').activeTrains;
-const { checkTrainConflict } = require('./trainutils.js');
+const { checkTrainConflict, calculateEstimatedArrival } = require('./trainutils.js');
+
 function detectConflicts() {
   const conflicts = [];
-  const trainsArray = Array.from(activeTrains.values()).filter(train => 
-    train.status === 'running' && train.nextStation
+  const trainsArray = Array.from(activeTrains.values()).filter(
+    train => train.status === 'running' && train.nextStation
   );
-
 
   for (let i = 0; i < trainsArray.length; i++) {
     for (let j = i + 1; j < trainsArray.length; j++) {
@@ -14,26 +14,23 @@ function detectConflicts() {
     }
   }
 
-  
   const stationGroups = {};
   trainsArray.forEach(train => {
-    if (train.nextStation) {
-      if (!stationGroups[train.nextStation]) {
-        stationGroups[train.nextStation] = [];
-      }
-      stationGroups[train.nextStation].push(train);
+    if (!stationGroups[train.nextStation]) {
+      stationGroups[train.nextStation] = [];
     }
+    stationGroups[train.nextStation].push(train);
   });
 
-  // Create conflicts for stations with multiple incoming trains
   Object.keys(stationGroups).forEach(station => {
-    if (stationGroups[station].length > 1) {
+    const group = stationGroups[station];
+    if (group.length > 1) {
       conflicts.push({
-        id: `conflict_${station}_${Date.now()}`,
-        station: station,
-        trains: stationGroups[station],
-        estimatedTime: Date.now() + 60000, // 1 minute from now
-        severity: stationGroups[station].length > 2 ? "High" : "Medium",
+        id: `station_conflict_${station}_${Date.now()}`,
+        station,
+        trains: group,
+        estimatedTime: Math.min(...group.map(t => calculateEstimatedArrival(t))),
+        severity: group.length > 2 ? "High" : "Medium",
         type: "station_congestion"
       });
     }
@@ -41,4 +38,5 @@ function detectConflicts() {
 
   return conflicts;
 }
+
 module.exports = detectConflicts;

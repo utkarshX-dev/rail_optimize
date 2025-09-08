@@ -7,5 +7,17 @@ const getJourneys = wrapAsync(async (req, res) => {
     journeys,
   });
 })
-module.exports = { getJourneys };
+const postJourneys = wrapAsync(async (req, res) => {
+  const { trainId, trainName, type, route, totalDelay } = req.body;
+  const journey = new CompletedJourney({
+    trainId,
+    trainName,
+    type,
+    route,
+    totalDelay
+  });
+  await journey.save();
+  res.status(201).json(journey);
+});
+module.exports = { getJourneys, postJourneys };
 

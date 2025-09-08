@@ -1,4 +1,3 @@
-// models/CompletedJourney.js
 const mongoose = require("mongoose");
 
 const CompletedJourneySchema = new mongoose.Schema({

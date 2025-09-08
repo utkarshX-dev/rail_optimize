@@ -1,4 +1,5 @@
-const { activeTrains } = require("../server.js");
+const { activeTrains } = require("../server");
+
 class TrainCoordinationAI {
   constructor() {
     this.decisionHistory = [];
@@ -15,16 +16,22 @@ class TrainCoordinationAI {
       features,
     });
 
+    // Apply delays if any
+    decision.decisions.forEach(d => {
+      if (d.action === "HOLD") {
+        const train = activeTrains.get(d.trainId);
+        if (train) train.addDelay(d.delay);
+      }
+    });
+
     return decision;
   }
 
   extractFeatures(conflict) {
     return {
       trainCount: conflict.trains.length,
-      priorityDifference: Math.abs(
-        conflict.trains[0].priority - conflict.trains[1].priority
-      ),
-      delayImpact: conflict.trains.reduce((sum, t) => sum + t.delay, 0),
+      priorityDifference: Math.abs(conflict.trains[0].priority - conflict.trains[1].priority),
+      delayImpact: conflict.trains.reduce((sum, t) => sum + (t.currentDelay || 0), 0),
       stationCongestion: this.calculateStationCongestion(conflict.station),
       timeOfDay: new Date().getHours(),
     };
@@ -71,4 +78,5 @@ class TrainCoordinationAI {
     return congestion;
   }
 }
+
 module.exports = TrainCoordinationAI;

@@ -1,9 +1,10 @@
 const { activeTrains } = require("../state.js");
+const CompletedJourney = require("../models/completedJourney.js");
 
 function calculateEstimatedArrival(train) {
   const currentTime = Date.now();
   const baseTravelTime = 30 * 60 * 1000;
-  const delayTime = train.delay * 60 * 1000;
+  const delayTime = (train.currentDelay || 0) * 60 * 1000;
   const randomVariance = Math.random() * 30 * 60 * 1000;
 
   return currentTime + baseTravelTime + delayTime + randomVariance;
@@ -46,7 +47,7 @@ function detectConflicts() {
 
 function coordinationLoop() {
   const now = Date.now();
-  const baseTravelTime = 5 * 60 * 1000;
+  const baseTravelTime = 5 * 60 * 1000; // 5 min per segment
 
   activeTrains.forEach((train) => {
     if (train.status === "completed") return;
@@ -54,20 +55,25 @@ function coordinationLoop() {
     if (!train.nextStation) {
       train.status = "completed";
       console.log(`Train ${train.id} completed its journey!`);
+
       const journey = new CompletedJourney({
         trainId: train.id,
         trainName: train.name,
         type: train.type,
         route: train.route,
         completedAt: new Date(),
-        totalDelay: train.delay || 0,
+        totalDelay: train.currentDelay || 0,
       });
 
-      journey.save().catch(err => console.error("Error saving completed journey:", err));
+      journey.save().catch(err =>
+        console.error("Error saving completed journey:", err)
+      );
+
       return;
     }
 
-    const effectiveTravelTime = baseTravelTime + (train.delay || 0) * 60 * 1000;
+    const effectiveTravelTime =
+      baseTravelTime + (train.currentDelay || 0) * 60 * 1000;
 
     if (!train.lastMoveTime || now - train.lastMoveTime >= effectiveTravelTime) {
       train.currentStation = train.nextStation;
@@ -77,12 +83,28 @@ function coordinationLoop() {
 
       if (!train.nextStation) {
         train.status = "completed";
-        console.log(`Train ${train.id} completed its journey! Route: ${train.route.join(" -> ")}`);
+        console.log(
+          `Train ${train.id} completed its journey! Route: ${train.route.join(
+            " -> "
+          )}`
+        );
+
+        const journey = new CompletedJourney({
+          trainId: train.id,
+          trainName: train.name,
+          type: train.type,
+          route: train.route,
+          completedAt: new Date(),
+          totalDelay: train.currentDelay || 0,
+        });
+
+        journey.save().catch(err =>
+          console.error("Error saving completed journey:", err)
+        );
       }
     }
   });
 }
-
 
 module.exports = {
   checkTrainConflict,
