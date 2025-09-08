@@ -11,6 +11,7 @@ const { sampleTrains } = require("./data/trainData.js");
 const registerSocketHandlers = require("./socket.js");
 const trainRoutes = require("./routes/trainRoutes.js");
 const { activeTrains } = require("./state.js");
+const journeyRoutes = require("./routes/journeyRoute.js");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -25,6 +26,7 @@ app.use(
 );
 app.use(express.json());
 app.use("/", trainRoutes);
+app.use("/", journeyRoutes);
 
 
 async function connectDB() {

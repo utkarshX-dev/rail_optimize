@@ -54,6 +54,16 @@ function coordinationLoop() {
     if (!train.nextStation) {
       train.status = "completed";
       console.log(`Train ${train.id} completed its journey!`);
+      const journey = new CompletedJourney({
+        trainId: train.id,
+        trainName: train.name,
+        type: train.type,
+        route: train.route,
+        completedAt: new Date(),
+        totalDelay: train.delay || 0,
+      });
+
+      journey.save().catch(err => console.error("Error saving completed journey:", err));
       return;
     }
 
