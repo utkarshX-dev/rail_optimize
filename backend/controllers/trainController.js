@@ -1,25 +1,32 @@
 const { activeTrains } = require("../state.js"); 
 const { stationCoordinates, sampleTrains } = require("../data/trainData.js");
 const detectConflicts = require("../utils/detectConflicts.js");
-const getRoot = (req, res) => {
-  res.send("🚆 Train Coordination Backend Running");
-};
 
-const getTrains = (req, res) => {
+const getRoot = (async (req, res) => {
+  res.send("🚆 Train Coordination Backend Running");
+});
+
+const getTrains = (async (req, res) => {
   const trains = Array.from(activeTrains.values());
   res.json(trains);
-};
+});
 
-const getStations = (req, res) => {
+const getStations = (async (req, res) => {
   res.json(stationCoordinates);
+});
+
+const getConflicts = async (req, res, next) => {
+  try {
+    const conflicts = detectConflicts();
+    res.json(conflicts);
+  } catch (err) {
+    console.error("❌ Error in getConflicts:", err);
+    res.status(500).json({ error: err.message });
+  }
 };
 
-const getConflicts = (req, res) => {
-  const conflicts = detectConflicts();
-  res.json(conflicts);
-};
 
-const addTrain = (req, res) => {
+const addTrain = (async (req, res) => {
   const newTrain = {
     ...req.body,
     id: `T${Date.now()}`,
@@ -33,9 +40,9 @@ const addTrain = (req, res) => {
   activeTrains.set(newTrain.id, newTrain);
   console.log(`Added new train: ${newTrain.id}`);
   res.json(newTrain);
-};
+});
 
-const checkConflictsNow = (req, res) => {
+const checkConflictsNow = (async (req, res) => {
   const conflicts = detectConflicts();
   const trains = Array.from(activeTrains.values());
 
@@ -54,9 +61,9 @@ const checkConflictsNow = (req, res) => {
     conflictCount: conflicts.length,
     message: conflicts.length > 0 ? "Conflicts detected!" : "No conflicts found",
   });
-};
+});
 
-const resetTrains = (req, res) => {
+const resetTrains = (async (req, res) => {
   activeTrains.clear();
   sampleTrains.forEach((train) => {
     const resetTrain = {
@@ -74,7 +81,7 @@ const resetTrains = (req, res) => {
     message: "Trains reset successfully",
     trains: Array.from(activeTrains.values()),
   });
-};
+});
 
 module.exports = {
   getRoot,

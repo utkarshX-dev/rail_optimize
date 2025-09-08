@@ -1,4 +1,5 @@
-const activeTrains = require('../server.js').activeTrains;
+const activeTrains = require('../state.js').activeTrains;
+const { checkTrainConflict } = require('./trainutils.js');
 function detectConflicts() {
   const conflicts = [];
   const trainsArray = Array.from(activeTrains.values()).filter(train => 

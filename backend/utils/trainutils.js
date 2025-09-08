@@ -1,7 +1,5 @@
-// trainUtils.js
-import { activeTrains } from "../state.js";
+const { activeTrains } = require("../state.js");
 
-// ===== Conflict detection =====
 function calculateEstimatedArrival(train) {
   const currentTime = Date.now();
   const baseTravelTime = 30 * 60 * 1000;
@@ -32,7 +30,7 @@ function checkTrainConflict(train1, train2) {
   return null;
 }
 
-export function detectConflicts() {
+function detectConflicts() {
   const trains = Array.from(activeTrains.values());
   const conflicts = [];
 
@@ -46,6 +44,26 @@ export function detectConflicts() {
   return conflicts;
 }
 
-export function coordinationLoop() {
+function coordinationLoop() {
   console.log("Running train coordination loop...");
+
+  activeTrains.forEach((train) => {
+    if (train.nextStation) {
+      train.currentStation = train.nextStation;
+      const nextIndex = train.route.indexOf(train.currentStation) + 1;
+      train.nextStation = train.route[nextIndex] || null;
+      train.lastMoveTime = Date.now();
+
+      // If train finished its route
+      if (!train.nextStation) {
+        console.log(`Train ${train.id} completed its journey! Route: ${train.route.join(" -> ")}`);
+      }
+    }
+  });
 }
+
+module.exports = {
+  checkTrainConflict,
+  detectConflicts,
+  coordinationLoop,
+};
