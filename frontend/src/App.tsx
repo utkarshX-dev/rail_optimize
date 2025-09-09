@@ -28,6 +28,8 @@ import { PrivacyPolicyPage } from "./components/pages/PrivacyPolicyPage";
 import { ContactPage } from "./components/pages/ContactPage";
 import { PlaceholderPage } from "./components/pages/PlaceholderPage";
 import DashboardApp from "./dashboard/components/Dashboard/DashboardApp.tsx";
+import ScrollToTop from "./ScrollToTop.tsx";
+
 
 function Layout() {
   const location = useLocation();
@@ -49,6 +51,7 @@ export default function App() {
     <UserProvider>
       <ThemeProvider>
         <Router>
+          <ScrollToTop />
           <Routes>
             <Route path="/login" element={<LoginPage />} />
             <Route path="/signup" element={<SignupPage />} />
