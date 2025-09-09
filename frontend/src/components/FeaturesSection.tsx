@@ -173,7 +173,7 @@ export function FeaturesSection() {
           </TabsContent>
         </Tabs>
 
-        <motion.div
+        {/* <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -206,7 +206,79 @@ export function FeaturesSection() {
               </div>
             </div>
           </div>
-        </motion.div>
+        </motion.div> */}
+
+
+        <motion.div
+  initial={{ opacity: 0, y: 50 }}
+  whileInView={{ opacity: 1, y: 0 }}
+  viewport={{ once: true }}
+  className="mt-20 px-4 md:px-0"
+>
+  <div className="bg-slate-900 border border-slate-700 rounded-3xl p-8 md:p-12 text-white shadow-2xl">
+    <div className="max-w-4xl mx-auto text-center">
+      <div className="flex items-center justify-center mb-4">
+        <span className="bg-indigo-500/20 text-indigo-300 rounded-full px-4 py-1 text-sm font-semibold tracking-wide">
+          Seamless Integration
+        </span>
+      </div>
+      <h3 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
+        Built to Integrate, Not to Replace
+      </h3>
+      <p className="text-slate-400 max-w-2xl mx-auto leading-relaxed mb-10 text-lg">
+        RailOptimize is designed to work in harmony with your existing
+        infrastructure. Our system integrates directly with live data streams
+        from signals, TMS, timetables, and rolling stock information via secure
+        APIs.
+      </p>
+      <div className="grid md:grid-cols-3 gap-6 md:gap-8">
+        <div className="bg-slate-800 border border-slate-700 rounded-2xl p-6 transition-all duration-300 hover:scale-105 hover:border-indigo-500/50">
+          <div className="bg-indigo-500/10 text-indigo-400 rounded-xl p-3 inline-flex mb-3">
+            {/* Replace with an icon from a library like Heroicons */}
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <h4 className="text-xl font-semibold mb-1">Real-time Data</h4>
+          <p className="text-slate-400 text-sm">
+            Live feeds from signals and train management systems for instant
+            decision-making.
+          </p>
+        </div>
+        <div className="bg-slate-800 border border-slate-700 rounded-2xl p-6 transition-all duration-300 hover:scale-105 hover:border-indigo-500/50">
+          <div className="bg-indigo-500/10 text-indigo-400 rounded-xl p-3 inline-flex mb-3">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+          </div>
+          <h4 className="text-xl font-semibold mb-1">Secure APIs</h4>
+          <p className="text-slate-400 text-sm">
+            Seamless and secure integration with existing railway IT systems.
+          </p>
+        </div>
+        <div className="bg-slate-800 border border-slate-700 rounded-2xl p-6 transition-all duration-300 hover:scale-105 hover:border-indigo-500/50">
+          <div className="bg-indigo-500/10 text-indigo-400 rounded-xl p-3 inline-flex mb-3">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m-6 0h6" />
+            </svg>
+          </div>
+          <h4 className="text-xl font-semibold mb-1">Performance Dashboards</h4>
+          <p className="text-slate-400 text-sm">
+            Visualize punctuality, throughput, and other key metrics in one
+            centralized view.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</motion.div>
+        
+
+
+
+
+
+
       </div>
     </section>
   );
