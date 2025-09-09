@@ -12,7 +12,7 @@ const registerSocketHandlers = require("./socket.js");
 const trainRoutes = require("./routes/trainRoutes.js");
 const journeyRoutes = require("./routes/journeyRoute.js");
 const { activeTrains } = require("./state.js");
-const CompletedJourney = require('./models/completedJourney.js');
+const userRoutes = require("./routes/userRoutes.js");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -20,7 +20,8 @@ const PORT = process.env.PORT || 5000;
 app.use(cors({ origin: "*", methods: ["GET","POST","PUT","DELETE"], allowedHeaders: ["Content-Type","Authorization"], credentials: true }));
 app.use(express.json());
 app.use("/", trainRoutes);
-app.use("/", journeyRoutes);
+app.use("/api/journeys", journeyRoutes);
+app.use("/api/users", userRoutes);
 
 async function connectDB() {
   try {
@@ -51,15 +52,18 @@ async function start() {
     activeTrains.set(initialTrain.id, initialTrain);
   });
 
-  setInterval(() => {
+  // setInterval(() => {
+  //   coordinationLoop();
+  //   console.log(Array.from(activeTrains.values()).map(t => ({
+  //     id: t.id,
+  //     currentStation: t.currentStation,
+  //     nextStation: t.nextStation,
+  //     status: t.status,
+  //     delay: t.delay || 0,
+  //   })));
+  // }, 5000);
+   setInterval(() => {
     coordinationLoop();
-    console.log(Array.from(activeTrains.values()).map(t => ({
-      id: t.id,
-      currentStation: t.currentStation,
-      nextStation: t.nextStation,
-      status: t.status,
-      delay: t.delay || 0,
-    })));
   }, 5000);
 
   console.log(`Initialized ${activeTrains.size} trains`);
