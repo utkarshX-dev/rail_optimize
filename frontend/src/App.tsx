@@ -181,7 +181,6 @@ export default function App() {
               <Route path="stats" element={<Stats />} />
               <Route path="add-train" element={<AddTrain />} />
               <Route path="profile" element={<Profile />} />
-              {/* Add more dashboard subpages here */}
             </Route>
           </Routes>
         </Router>
