@@ -1,6 +1,7 @@
 const { activeTrains } = require("../state.js"); 
 const { stationCoordinates, sampleTrains } = require("../data/trainData.js");
 const detectConflicts = require("../utils/detectConflicts.js");
+const { logConflict } = require("../utils/logConflict");  //add this 
 
 const getRoot = (async (req, res) => {
   res.send("🚆 Train Coordination Backend Running");
@@ -15,9 +16,31 @@ const getStations = (async (req, res) => {
   res.json(stationCoordinates);
 });
 
+/*const getConflicts = async (req, res, next) => {
+  try {
+    const conflicts = detectConflicts();
+    res.json(conflicts);
+  } catch (err) {
+    console.error("❌ Error in getConflicts:", err);
+    res.status(500).json({ error: err.message });
+  }
+};
+*/
 const getConflicts = async (req, res, next) => {
   try {
     const conflicts = detectConflicts();
+
+    // Log each conflict to DB
+    for (let conflict of conflicts) {
+      await logConflict(
+        conflict.trainA,
+        conflict.trainB,
+        conflict.decision || "undecided",   // fallback if no AI decision yet
+        conflict.features || {},            // snapshot of state
+        "pending"
+      );
+    }
+    
     res.json(conflicts);
   } catch (err) {
     console.error("❌ Error in getConflicts:", err);
@@ -42,7 +65,7 @@ const addTrain = (async (req, res) => {
   res.json(newTrain);
 });
 
-const checkConflictsNow = (async (req, res) => {
+/*const checkConflictsNow = (async (req, res) => {
   const conflicts = detectConflicts();
   const trains = Array.from(activeTrains.values());
 
@@ -62,6 +85,38 @@ const checkConflictsNow = (async (req, res) => {
     message: conflicts.length > 0 ? "Conflicts detected!" : "No conflicts found",
   });
 });
+*/
+const checkConflictsNow = async (req, res) => {
+  const conflicts = detectConflicts();
+  const trains = Array.from(activeTrains.values());
+
+  console.log(`Manual conflict check: ${conflicts.length} conflicts found`);
+
+  // Log conflicts again here
+  for (let conflict of conflicts) {
+    await logConflict(
+      conflict.trainA,
+      conflict.trainB,
+      conflict.decision || "undecided",
+      conflict.features || {},
+      "pending"
+    );
+  }
+
+  res.json({
+    conflicts,
+    trains: trains.map((t) => ({
+      id: t.id,
+      name: t.name,
+      currentStation: t.currentStation,
+      nextStation: t.nextStation,
+      status: t.status,
+      priority: t.priority,
+    })),
+    conflictCount: conflicts.length,
+    message: conflicts.length > 0 ? "Conflicts detected!" : "No conflicts found",
+  });
+};
 
 const resetTrains = (async (req, res) => {
   activeTrains.clear();
