@@ -7,8 +7,8 @@ import os
 
 # Define API endpoint and file paths
 API_URL = "http://localhost:5000/api/conflicts/export"  # Replace with your backend URL
-DATASET_CSV_PATH = "train_traffic_dataset.csv"          # Existing training dataset file
-MODEL_PATH = "train_coordination_model.pkl"             # Your model filepath
+DATASET_CSV_PATH = "train_traffic_dataset.csv"         
+MODEL_PATH = "train_coordination_model.pkl"             #  model filepath
 
 def fetch_conflict_logs():
     """Fetch conflict logs via API and return JSON data."""
