@@ -1,133 +1,302 @@
-import { useState, useContext, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import axios from "axios";
-import { auth, provider } from "../../../utils/firebase.js";
-import { signInWithPopup } from "firebase/auth";
-import UserContext from "../../context/userContext.js";
-import { Button } from "../ui/button";
-import { Input } from "../ui/input";
-import { Label } from "../ui/label";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
-import { Eye, EyeOff, Lock, Mail, Train } from "lucide-react";
-import { motion } from "motion/react";
+import { Input } from "../ui/input";
+import { Button } from "../ui/button";
+import { Label } from "../ui/label";
+import { Train, ArrowRight, Mail, Lock, Eye, EyeOff } from "lucide-react";
+import axios from "axios";
+import UserContext from "../../context/userContext";
+import { useContext } from "react";
 
-export function LoginPage() {
-  const [showPassword, setShowPassword] = useState(false);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [msg, setMsg] = useState<string | null>(null);
-  const { token, setToken } = useContext(UserContext);
-
+export default function LoginPage() {
+  const { setToken, setUser } = useContext(UserContext);
   const navigate = useNavigate();
-  useEffect(() => {
-    if (token) {
-      navigate("/dashboard");
-    }
-  }, [token, navigate]);
-
-  const handleLogin = async ({ name, email, password, googleId }: { name?: string; email: string; password?: string | null; googleId?: string }) => {
-    try {
-      const res = await axios.post(`${import.meta.env.VITE_API_URL}/users/login`, { name, email, password, googleId });
-      const { token } = res.data;
-      setToken?.(token);
-      setMsg(null);
-      navigate("/dashboard");
-    } catch (error: any) {
-      setMsg(error?.response?.data?.message || "Login failed. Please try again.");
-      console.error("Login failed:", error);
-    }
-    navigate("/dashboard");
-  };
+  const [msg, setMsg] = useState("");
+  const [err, setErr] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [formData, setFormData] = useState({
+    email: "",
+    password: ""
+  });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await handleLogin({ email, password });
-  };
-
-  const handleGoogleLogin = async () => {
+    setMsg(""); // Clear both messages
+    setErr("");
+    
+    if (!formData.email || !formData.password) {
+      setErr("Please fill in all fields.");
+      return;
+    }
+    
     try {
-      const response = await signInWithPopup(auth, provider);
-      const { displayName, email, uid } = response.user;
-      await handleLogin({ name: displayName || "", email: email || "", googleId: uid || "" });
-    } catch (error) {
-      setMsg("Google login failed. Please try again.");
-      console.error("Google login failed:", error);
+      const apiUrl = `${import.meta.env.VITE_API_URL}/users/login`;
+      console.log("API URL:", apiUrl);  
+      console.log("Form Data:", formData);
+      
+      const res = await axios.post(apiUrl, {
+        email: formData.email,
+        password: formData.password,
+      }, {
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      });
+      
+      if(res.status === 200){
+        setToken(res.data.token);
+        localStorage.setItem('session-token', res.data.token);
+        setUser(res.data.user);
+        localStorage.setItem('user', JSON.stringify(res.data.user));
+      }
+      
+      console.log("res: ", res);
+      setMsg("Login successful. Redirecting to dashboard...");
+      setErr(""); 
+      setTimeout(() => {
+        navigate("/dashboard");
+      }, 1500);
+      
+    } catch (error: any) {
+      setMsg(""); 
+      
+      if (error.response) {
+        setErr(error.response.data.message || "Login failed. Please try again.");
+      } else if (error.request) {
+        setErr("Network error. Please check your connection.");
+      } else {
+        setErr("An unexpected error occurred.");
+      }
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-background to-blue-50">
-      <div className="grid lg:grid-cols-2 min-h-screen">
-        <div className="hidden lg:flex flex-col justify-center px-12 bg-gradient-to-br from-blue-600 to-indigo-700 text-white">
-          <motion.div initial={{ opacity: 0, x: -50 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8 }}>
-            <div className="flex items-center space-x-3 mb-8">
-              <Train className="h-12 w-12" />
-              <span className="text-3xl font-bold">RailOptimize</span>
+    <div className="min-h-screen bg-slate-900 relative overflow-hidden">
+      {/* Background pattern */}
+      <div className="absolute inset-0 bg-grid-slate-800 bg-[size:20px_20px] opacity-30"></div>
+      
+      <div className="grid lg:grid-cols-2 min-h-screen relative">
+        {/* Left Panel */}
+        <div className="hidden lg:flex flex-col justify-center items-start px-16 py-12 bg-gradient-to-br from-slate-800 via-slate-700 to-indigo-900 text-white relative overflow-hidden">
+          {/* Background Pattern */}
+          <div className="absolute inset-0 opacity-10">
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent transform -skew-y-12"></div>
+          </div>
+          
+          <motion.div
+            initial={{ opacity: 0, x: -50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8 }}
+            className="relative z-10 max-w-lg"
+          >
+            {/* Logo Section */}
+            <div className="flex items-center space-x-4 mb-12">
+              <div className="p-3 bg-indigo-500/20 border border-indigo-500/30 rounded-xl backdrop-blur-sm">
+                <Train className="h-10 w-10 text-indigo-300" />
+              </div>
+              <div>
+                <span className="text-4xl font-bold block text-white">
+                  त्रिवेणी<span className="text-indigo-300">Path</span>
+                </span>
+                <span className="text-slate-400 text-sm">Railway Management System</span>
+              </div>
             </div>
-            <h2 className="text-4xl font-bold mb-6">Welcome Back</h2>
-            <p className="text-xl text-blue-100 mb-12">Sign in to continue managing railways efficiently</p>
+            
+            {/* Main Content */}
+            <div className="space-y-8">
+              <div>
+                <h1 className="text-5xl font-bold mb-6 leading-tight text-white">
+                  Welcome<br />Back
+                </h1>
+                <p className="text-xl text-slate-400 leading-relaxed">
+                  Sign in to access your railway management dashboard and continue optimizing operations with our AI-powered platform.
+                </p>
+              </div>
+              
+              {/* Feature highlights */}
+              <div className="space-y-5">
+                <div className="flex items-center space-x-4">
+                  <div className="w-3 h-3 bg-indigo-400 rounded-full flex-shrink-0"></div>
+                  <span className="text-slate-300 text-lg">Real-time train monitoring</span>
+                </div>
+                <div className="flex items-center space-x-4">
+                  <div className="w-3 h-3 bg-emerald-400 rounded-full flex-shrink-0"></div>
+                  <span className="text-slate-300 text-lg">AI-powered conflict resolution</span>
+                </div>
+                <div className="flex items-center space-x-4">
+                  <div className="w-3 h-3 bg-purple-400 rounded-full flex-shrink-0"></div>
+                  <span className="text-slate-300 text-lg">Advanced analytics & insights</span>
+                </div>
+              </div>
+
+              {/* Stats Section */}
+              <div className="grid grid-cols-2 gap-8 pt-8 border-t border-slate-600/30">
+                <div>
+                  <div className="text-3xl font-bold text-indigo-400">99.9%</div>
+                  <div className="text-slate-400 text-sm">Uptime</div>
+                </div>
+                <div>
+                  <div className="text-3xl font-bold text-emerald-400">24/7</div>
+                  <div className="text-slate-400 text-sm">Support</div>
+                </div>
+              </div>
+            </div>
           </motion.div>
         </div>
 
-        <div className="flex items-center justify-center px-4 py-12">
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-md">
+        {/* Right Panel - Login Form */}
+        <div className="flex items-center justify-center px-6 py-12 lg:px-12 bg-slate-900">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="w-full max-w-md"
+          >
+            {/* Mobile Logo */}
+            <div className="lg:hidden text-center mb-8">
+              <div className="flex items-center justify-center space-x-2 mb-2">
+                <Train className="h-8 w-8 text-indigo-400" />
+                <span className="text-2xl font-bold text-white">
+                  त्रिवेणी<span className="text-indigo-400">Path</span>
+                </span>
+              </div>
+            </div>
+
+            {/* Success Message */}
             {msg && (
-              <div className="mb-4">
-                <div className="bg-red-100 border border-red-300 text-red-700 px-4 py-2 rounded text-center">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="mb-6"
+              >
+                <div className="px-4 py-3 rounded-lg text-center font-medium bg-emerald-500/10 border border-emerald-500/30 text-emerald-400">
                   {msg}
                 </div>
-              </div>
+              </motion.div>
             )}
-            <Card className="shadow-xl border-0 bg-white rounded-lg">
-              <CardHeader className="text-center pb-2">
-                <CardTitle className="text-xl">Sign In</CardTitle>
+
+            {/* Error Message */}
+            {err && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="mb-6"
+              >
+                <div className="px-4 py-3 rounded-lg text-center font-medium bg-red-500/10 border border-red-500/30 text-red-400">
+                  {err}
+                </div>
+              </motion.div>
+            )}
+
+            <Card className="shadow-2xl border border-slate-700 bg-slate-800/80 backdrop-blur-sm">
+              <CardHeader className="text-center pb-6 pt-8">
+                <CardTitle className="text-3xl font-bold text-white mb-2">
+                  Sign In
+                </CardTitle>
+                <p className="text-slate-400">
+                  Enter your credentials to access your account
+                </p>
               </CardHeader>
-              <CardContent>
+
+              <CardContent className="px-8 pb-8">
                 <form onSubmit={handleSubmit} className="space-y-6">
+                  {/* Email Field - FIXED */}
                   <div className="space-y-2">
-                    <Label htmlFor="email" className="text-sm font-medium">Email</Label>
+                    <Label htmlFor="email" className="text-sm font-semibold text-slate-300 flex items-center gap-2">
+                      <Mail className="h-4 w-4 text-slate-400" />
+                      Email Address
+                    </Label>
                     <div className="relative">
-                      <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                      <Input id="email" type="email" placeholder="Enter your email" value={email} onChange={(e) => setEmail(e.target.value)} required className="pl-10 h-12" />
+                      <Input
+                        id="email"
+                        type="email"
+                        placeholder="Enter your email"
+                        value={formData.email}
+                        onChange={(e) => setFormData({...formData, email: e.target.value})}
+                        className="pl-12 h-12 bg-slate-700 border-slate-600 text-white placeholder-slate-400 focus:border-indigo-500 focus:ring-indigo-500/20"
+                        required
+                      />
                     </div>
                   </div>
 
+                  {/* Password Field - FIXED */}
                   <div className="space-y-2">
-                    <Label htmlFor="password" className="text-sm font-medium">Password</Label>
+                    <Label htmlFor="password" className="text-sm font-semibold text-slate-300 flex items-center gap-2">
+                      <Lock className="h-4 w-4 text-slate-400" />
+                      Password
+                    </Label>
                     <div className="relative">
-                      <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                      <Input id="password" type={showPassword ? "text" : "password"} placeholder="Enter password" value={password} onChange={(e) => setPassword(e.target.value)} required className="pl-10 pr-10 h-12" />
-                      <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-3 text-gray-400">
-                        {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      <Input
+                        id="password"
+                        type={showPassword ? "text" : "password"}
+                        placeholder="Enter your password"
+                        value={formData.password}
+                        onChange={(e) => setFormData({...formData, password: e.target.value})}
+                        className="pl-12 pr-12 h-12 bg-slate-700 border-slate-600 text-white placeholder-slate-400 focus:border-indigo-500 focus:ring-indigo-500/20"
+                        required
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-4 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-300 transition-colors"
+                      >
+                        {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                       </button>
                     </div>
                   </div>
 
-                  <Button type="submit" className="w-full h-12">Sign In</Button>
+                  {/* Terms Agreement */}
+                  <div className="flex items-start space-x-3">
+                    <input
+                      id="remember"
+                      type="checkbox"
+                      className="h-4 w-4 mt-1 text-indigo-600 bg-slate-700 border-slate-600 rounded focus:ring-indigo-500 focus:ring-offset-slate-800"
+                      required
+                    />
+                    <label htmlFor="remember" className="text-sm text-slate-400 leading-relaxed">
+                      I agree to the{" "}
+                      <Link to="/terms-of-service" className="text-indigo-400 hover:text-indigo-300 font-semibold transition-colors">
+                        Terms of Service
+                      </Link>{" "}
+                      and{" "}
+                      <Link to="/privacy-policy" className="text-indigo-400 hover:text-indigo-300 font-semibold transition-colors">
+                        Privacy Policy
+                      </Link>
+                    </label>
+                  </div>
+
+                  {/* Submit Button */}
+                  <Button
+                    type="submit"
+                    className="w-full h-12 bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center"
+                  >
+                    Sign In
+                    <ArrowRight className="ml-2 h-5 w-5" />
+                  </Button>
                 </form>
-                
-                <div className="mt-4 text-center">
-                  <hr />
-                  <p className="">or</p>
+
+                {/* Footer Links */}
+                <div className="mt-8 text-center space-y-4 display: flex flex-col items-center justify-between">
+                  <p className="text-sm text-slate-400">
+                    Don't have an account?{" "}
+                    <button
+                      onClick={() => navigate("/signup")}
+                      className="text-indigo-400 hover:text-indigo-300 font-semibold transition-colors"
+                    >
+                      Sign up
+                    </button>
+                  </p>
+                  
+                  <button
+                    onClick={() => navigate("/")}
+                    className="text-sm text-slate-500 hover:text-slate-400 transition-colors flex items-center justify-center"
+                  >
+                    ← Back to Home
+                  </button>
                 </div>
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={handleGoogleLogin}
-                  className="w-full h-12 flex items-center justify-center gap-2 border-blue-500 text-blue-700 hover:bg-blue-50 hover:border-blue-600"
-                >
-                  <svg width="20" height="20" viewBox="0 0 48 48" className="inline-block mr-2"><g><path fill="#4285F4" d="M43.6 20.5h-1.9V20H24v8h11.3c-1.6 4.3-5.7 7-11.3 7-6.6 0-12-5.4-12-12s5.4-12 12-12c2.7 0 5.2.9 7.2 2.4l6.1-6.1C34.3 5.5 29.4 3.5 24 3.5 12.7 3.5 3.5 12.7 3.5 24S12.7 44.5 24 44.5c11 0 20.5-8.5 20.5-20.5 0-1.4-.1-2.7-.4-4z"/><path fill="#34A853" d="M6.3 14.7l6.6 4.8C14.5 16.1 18.8 13 24 13c2.7 0 5.2.9 7.2 2.4l6.1-6.1C34.3 5.5 29.4 3.5 24 3.5c-7.2 0-13.4 4.1-16.7 10.2z"/><path fill="#FBBC05" d="M24 44.5c5.4 0 10.3-1.8 14.1-4.9l-6.5-5.3c-2 1.4-4.5 2.2-7.6 2.2-5.6 0-10.3-3.7-12-8.7l-6.6 5.1C7.6 39.7 15.2 44.5 24 44.5z"/><path fill="#EA4335" d="M43.6 20.5h-1.9V20H24v8h11.3c-1.1 3-4.1 5.5-7.3 6.2l6.5 5.3c-2.9 2.1-6.6 3.5-10.5 3.5-8.8 0-16.4-4.8-19.7-11.8l6.6-5.1c1.7 5 6.4 8.7 12 8.7 3.1 0 5.6-.8 7.6-2.2l6.5 5.3C38.3 42.7 43.6 34.7 43.6 24c0-1.4-.1-2.7-.4-4z"/></g></svg>
-                  Continue with Google
-                </Button>
               </CardContent>
-              <div className="mb-4 text-center">
-                <div className="text-center">
-                  <p className="text-sm text-gray-600">Don't have an account? <button onClick={() => navigate('/signup')} className="text-blue-600">Sign up</button></p>
-                </div>
-                <div className="mt-2 text-center">
-                  <button onClick={() => navigate('/')} className="text-sm text-muted-foreground hover:text-foreground">← Back to Home</button>
-                </div>
-              </div>
             </Card>
           </motion.div>
         </div>

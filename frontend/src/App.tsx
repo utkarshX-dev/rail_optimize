@@ -11,6 +11,7 @@ import AddTrain from "./dashboard/components/ticket/AddTrain";
 import Stats from "./dashboard/components/Stats/Stats";
 import { ThemeProvider } from "./components/ThemeProvider";
 import { Header } from "./components/Header";
+import AdminPage from "./dashboard/components/admin/admin.tsx";
 import { HeroSection } from "./components/HeroSection";
 import NotFound from "./components/NotFound.tsx";
 import { ProblemSection } from "./components/ProblemSection";
@@ -19,8 +20,8 @@ import { FeaturesSection } from "./components/FeaturesSection";
 import { BenefitsSection } from "./components/BenefitsSection";
 import { Footer } from "./components/Footer";
 import { UserProvider } from "./context/userContext";
-import { LoginPage } from "./components/pages/LoginPage";
-import { SignupPage } from "./components/pages/SignupPage";
+import  LoginPage  from "./components/pages/LoginPage";
+import SignupPage  from "./components/pages/SignupPage";
 import { DemoPage } from "./components/pages/DemoPage";
 import { LearnMorePage } from "./components/pages/LearnMorePage";
 import { ProblemStatementPage } from "./components/pages/ProblemStatementPage";
@@ -179,6 +180,7 @@ export default function App() {
               <Route path="add-train" element={<AddTrain />} />
               <Route path="profile" element={<Profile />} />
               <Route path="chatbot" element={<ChatBot/>}></Route>
+              <Route path="admin" element={<AdminPage/>}></Route>
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>

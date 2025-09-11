@@ -1,7 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const { exportConflicts } = require('../controllers/conflictController.js');
 
-router.get('/export', exportConflicts);
+router.get('/export', (req, res) => {
+  res.json({ 
+    message: 'Conflict export endpoint - coming soon',
+    status: 'placeholder' 
+  });
+});
 
 module.exports = router;
