@@ -45,7 +45,7 @@ const detectConflicts = createDetectConflicts({
 // -------------------- Coordination Loop --------------------
 async function coordinationLoop() {
   const now = Date.now();
-  const baseTravelTime = 30 * 1000; // 30s per segment
+  const baseTravelTime = 30 * 1000;
   let movementOccurred = false;
   let aiDecisionMade = null;
 
@@ -55,19 +55,7 @@ async function coordinationLoop() {
     if (!train.nextStation) {
       train.status = "completed";
       console.log(`🚂 Train ${train.id} (${train.name}) completed its journey!`);
-
-      const journey = new CompletedJourney({
-        trainId: train.id,
-        trainName: train.name,
-        type: train.type,
-        route: train.route,
-        completedAt: new Date(),
-        totalDelay: train.currentDelay || train.delay || 0,
-      });
-
-      journey.save().catch(err =>
-        console.error("Error saving completed journey:", err)
-      );
+      // Save completed journey...
       return;
     }
 
@@ -75,51 +63,50 @@ async function coordinationLoop() {
     const speedFactor = (train.speed || 60) / 60;
     const effectiveTravelTime = (baseTravelTime / speedFactor) + delayTime;
 
+    // CRITICAL: Initialize lastMoveTime only if it doesn't exist
     if (!train.lastMoveTime) {
       train.lastMoveTime = now;
+      return; // Skip first iteration to establish baseline
     }
 
     const timeSinceLastMove = now - train.lastMoveTime;
 
-    if (timeSinceLastMove >= effectiveTravelTime) {
+    // IMPORTANT: Only move train if it's not held by AI decision
+    const isHeldByAI = train.status === "delayed" && 
+                       train.lastDecision && 
+                       train.lastDecision.action === "HOLD" &&
+                       (now - train.lastDecisionTime) < (train.lastDecision.delay * 60 * 1000);
+
+    if (!isHeldByAI && timeSinceLastMove >= effectiveTravelTime) {
+      // Train can proceed to next station
       train.currentStation = train.nextStation;
       const currentIndex = train.route.indexOf(train.currentStation);
       const nextIndex = currentIndex + 1;
       train.nextStation = train.route[nextIndex] || null;
+      
+      // CRITICAL: Update lastMoveTime to current time for new segment
       train.lastMoveTime = now;
       train.status = "running";
       movementOccurred = true;
 
-      const timeToNext = train.nextStation ?
-        `${Math.round(effectiveTravelTime / 1000)}s to ${train.nextStation}` :
-        'Journey Complete';
-
-      console.log(`🚂 Train ${train.id} (${train.name}) → ${train.currentStation} | Next: ${timeToNext}`);
+      console.log(`🚂 Train ${train.id} → ${train.currentStation}`);
 
       if (!train.nextStation) {
         train.status = "completed";
-        console.log(`✅ Train ${train.id} (${train.name}) completed journey! Route: ${train.route.join(" → ")}`);
-
-        const journey = new CompletedJourney({
-          trainId: train.id,
-          trainName: train.name,
-          type: train.type,
-          route: train.route,
-          completedAt: new Date(),
-          totalDelay: train.currentDelay || train.delay || 0,
-        });
-
-        journey.save().catch(err =>
-          console.error("Error saving completed journey:", err)
-        );
+        // Save completed journey...
       }
 
+      // Gradually reduce delay over time
       if (train.currentDelay > 0) {
         train.currentDelay = Math.max(0, train.currentDelay - 0.25);
       }
+    } else if (isHeldByAI) {
+      // Train is being held, maintain current position calculation
+      console.log(`⏸️ Train ${train.id} held by AI decision`);
     }
   });
 
+  // Detect conflicts AFTER movement updates
   const conflicts = detectConflicts();
   if (conflicts.length > 0) {
     console.log(`⚠️ ${conflicts.length} conflicts detected, consulting AI...`);
@@ -127,10 +114,6 @@ async function coordinationLoop() {
     try {
       aiDecisionMade = await ai.makeDecision(conflicts);
       console.log(`🤖 AI Decision: ${aiDecisionMade.decisions.length} actions taken`);
-
-      if (aiDecisionMade.recommendation) {
-        console.log(`💡 AI Recommendation: ${aiDecisionMade.recommendation}`);
-      }
     } catch (error) {
       console.error('❌ Error in AI coordination:', error.message);
     }

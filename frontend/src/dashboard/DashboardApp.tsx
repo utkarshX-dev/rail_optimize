@@ -286,13 +286,18 @@ const EnhancedTrainMap = ({ trains = [], selectedTrain, setSelectedTrain }) => {
       <div style="min-width: 220px; font-family: system-ui;">
         <h4 style="margin: 0 0 12px 0; color: ${color}; font-size: 16px;">
           ${train.name || train.id}
+          ${position && position.isHeld ? ' <span style="color: #dc2626; font-size: 12px;">[HELD]</span>' : ''}
         </h4>
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 13px;">
           <div><strong>Type:</strong> ${train.type}</div>
           <div><strong>Priority:</strong> ${train.priority}</div>
           <div><strong>Status:</strong> 
-            <span style="color: ${train.status === 'running' ? '#059669' : '#dc2626'};">
-              ${train.status}
+            <span style="color: ${
+              train.status === 'running' ? '#059669' : 
+              train.status === 'delayed' ? '#dc2626' : 
+              '#dc2626'
+            };">
+              ${train.status}${position && position.isHeld ? ' (AI Hold)' : ''}
             </span>
           </div>
           <div><strong>Speed:</strong> ${train.speed} km/h</div>
@@ -305,14 +310,17 @@ const EnhancedTrainMap = ({ trains = [], selectedTrain, setSelectedTrain }) => {
           ${train.nextStation ? `
             <div style="grid-column: 1 / -1; margin-top: 4px;">
               <div style="background: #f0f0f0; border-radius: 10px; height: 6px; overflow: hidden;">
-                <div style="background: ${color}; height: 100%; width: ${progressPercent}%; transition: width 1s ease-out;"></div>
+                <div style="background: ${position && position.isHeld ? '#dc2626' : color}; height: 100%; width: ${progressPercent}%; transition: width 1s ease-out;"></div>
               </div>
-              <div style="font-size: 11px; color: #666; margin-top: 2px;">Progress: ${progressPercent}%</div>
+              <div style="font-size: 11px; color: #666; margin-top: 2px;">
+                Progress: ${progressPercent}%${position && position.isHeld ? ' (Paused)' : ''}
+              </div>
             </div>
           ` : ''}
           ${(train.delay > 0 || train.currentDelay > 0) ? `
             <div style="grid-column: 1 / -1; color: #dc2626; margin-top: 4px;">
               <strong>Delay:</strong> +${Math.max(train.delay || 0, train.currentDelay || 0).toFixed(1)} min
+              ${train.lastDecision && train.lastDecision.action === 'HOLD' ? ' (AI Applied)' : ''}
             </div>
           ` : ''}
         </div>
