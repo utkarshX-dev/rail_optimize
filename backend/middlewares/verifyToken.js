@@ -22,5 +22,4 @@ const verifyToken = async (req, res, next) => {
     throw new ExpressError("Invalid or expired token", 401);
   }
 };
-
 module.exports = verifyToken;
