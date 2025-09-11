@@ -1,3 +1,4 @@
+
 const dotenv = require("dotenv");
 dotenv.config();
 const express = require("express");
@@ -14,6 +15,9 @@ const journeyRoutes = require("./routes/journeyRoute.js");
 const { activeTrains } = require("./state.js");
 const userRoutes = require("./routes/userRoutes.js");
 
+// Added import for conflictRoutes to enable conflict export API
+const conflictRoutes = require("./routes/conflictRoutes.js");
+
 const app = express();
 const PORT = process.env.PORT || 5000;
 
@@ -22,6 +26,9 @@ app.use(express.json());
 app.use("/", trainRoutes);
 app.use("/api/journeys", journeyRoutes);
 app.use("/api/users", userRoutes);
+
+// Added conflict routes handling for /api/conflicts/*
+app.use("/api/conflicts", conflictRoutes);
 
 async function connectDB() {
   try {
@@ -75,3 +82,4 @@ async function start() {
 }
 
 start();
+
