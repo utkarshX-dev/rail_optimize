@@ -226,7 +226,7 @@
 //         Built to Integrate, Not to Replace
 //       </h3>
 //       <p className="text-slate-400 max-w-2xl mx-auto leading-relaxed mb-10 text-lg">
-//         RailOptimize is designed to work in harmony with your existing
+//         त्रिवेणीPath is designed to work in harmony with your existing
 //         infrastructure. Our system integrates directly with live data streams
 //         from signals, TMS, timetables, and rolling stock information via secure
 //         APIs.

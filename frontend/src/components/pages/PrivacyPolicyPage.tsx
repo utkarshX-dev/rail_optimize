@@ -74,7 +74,7 @@ export function PrivacyPolicyPage() {
             </div>
             <p className="text-xl text-muted-foreground leading-relaxed">
               Your privacy is our priority. This policy explains how we collect, use, 
-              and protect your information when you use RailOptimize services.
+              and protect your information when you use त्रिवेणीPath services.
             </p>
             <div className="mt-6 text-sm text-muted-foreground">
               Last updated: August 30, 2025
@@ -98,7 +98,7 @@ export function PrivacyPolicyPage() {
                 <CardContent className="p-8">
                   <h2 className="text-2xl mb-4 text-blue-800 dark:text-blue-200">Introduction</h2>
                   <p className="text-blue-700 dark:text-blue-300 leading-relaxed mb-4">
-                    RailOptimize ("we," "our," or "us") is committed to protecting your privacy and 
+                    त्रिवेणीPath ("we," "our," or "us") is committed to protecting your privacy and 
                     ensuring the security of your personal information. This Privacy Policy applies 
                     to our intelligent railway traffic management platform and related services.
                   </p>
@@ -193,7 +193,7 @@ export function PrivacyPolicyPage() {
                     please contact our Data Protection Officer:
                   </p>
                   <div className="space-y-2 text-muted-foreground">
-                    <div>Email: privacy@railoptimize.com</div>
+                    <div>Email: privacy@त्रिवेणीPath.com</div>
                     <div>Phone: +91 11 2345 6789</div>
                     <div>Address: New Delhi, India</div>
                   </div>

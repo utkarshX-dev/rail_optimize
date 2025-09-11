@@ -134,7 +134,7 @@
 //         </motion.div>
 
 //         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.7 }} className="text-center mt-16">
-//           <p className="text-muted-foreground mb-4">Join 500+ railway professionals already using RailOptimize</p>
+//           <p className="text-muted-foreground mb-4">Join 500+ railway professionals already using त्रिवेणीPath</p>
 //           <div className="flex items-center justify-center space-x-2 text-sm text-muted-foreground">
 //             <Users className="h-4 w-4" />
 //             <span>Trusted by Indian Railways divisions nationwide</span>
