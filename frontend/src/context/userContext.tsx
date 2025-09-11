@@ -22,7 +22,17 @@ const UserContext = createContext<UserContextType>({
 });
 
 export const UserProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<User | null>(() => {
+    // Initialize user from localStorage
+    try {
+      const storedUser = localStorage.getItem("user");
+      return storedUser ? JSON.parse(storedUser) : null;
+    } catch (error) {
+      console.error("Error parsing stored user:", error);
+      return null;
+    }
+  });
+
   const [token, setToken] = useState<string | null>(() => {
     const storedToken = localStorage.getItem("session-token");
     return storedToken ? storedToken : null;
@@ -33,9 +43,18 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       localStorage.setItem("session-token", token);
     } else {
       localStorage.removeItem("session-token");
+      localStorage.removeItem("user");
       setUser(null);
     }
   }, [token]);
+
+  useEffect(() => {
+    if (user) {
+      localStorage.setItem("user", JSON.stringify(user));
+    } else {
+      localStorage.removeItem("user");
+    }
+  }, [user]);
 
   return (
     <UserContext.Provider value={{ token, setToken, user, setUser }}>

@@ -18,20 +18,20 @@ const login = async (req, res) => {
     return res.status(401).json({ message: "Invalid email or password" });
   }
   const token = generateAuthToken(user);
-  res.status(200).json({ token, user: { id: user._id, name: user.name, email: user.email } });
+  res.status(200).json({ token, user: { id: user._id, name: user.name, email: user.email, role: user.role } });
 };
 
 const register = async (req, res) => {
   const { name, email, password } = req.body;
   const existingUser = await User.findOne({ email });
   if (existingUser) {
-    return res.status(400).json({ message: "User already exists" });
+    return res.status(400).json({ message: "Email already exists." });
   }
   const hashedPassword = await bcrypt.hash(password, 10);
   const user = new User({ name, email, password: hashedPassword, role: 'user' });
   await user.save();
   const token = generateAuthToken(user);
-  res.status(201).json({ token, user: { id: user._id, name: user.name, email: user.email } });
+  res.status(201).json({ token, user: { id: user._id, name: user.name, email: user.email, role: user.role } });
 };
 
 const adminLogin = async (req, res) => {
@@ -43,7 +43,7 @@ const adminLogin = async (req, res) => {
   if(user.role !== 'admin' || user.password !== password) {
     return res.status(403).json({ message: "Access denied" });
   }
-  res.status(200).json({ user: { id: user._id, name: user.name, email: user.email } });
+  res.status(200).json({ user: { id: user._id, name: user.name, email: user.email, role: user.role } });
 };
 
 const getUsers = async (req, res) => {
