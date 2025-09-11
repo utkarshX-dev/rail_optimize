@@ -52,19 +52,20 @@ async function start() {
     activeTrains.set(initialTrain.id, initialTrain);
   });
 
-  // setInterval(() => {
-  //   coordinationLoop();
-  //   console.log(Array.from(activeTrains.values()).map(t => ({
-  //     id: t.id,
-  //     currentStation: t.currentStation,
-  //     nextStation: t.nextStation,
-  //     status: t.status,
-  //     delay: t.delay || 0,
-  //   })));
-  // }, 5000);
-   setInterval(() => {
+  setInterval(() => {
     coordinationLoop();
+    console.log(Array.from(activeTrains.values()).map(t => ({
+      id: t.id,
+      currentStation: t.currentStation,
+      nextStation: t.nextStation,
+      status: t.status,
+      speed: t.speed,
+      delay: t.delay || 0,
+    })));
   }, 5000);
+  //  setInterval(() => {
+  //   coordinationLoop();
+  // }, 5000);
 
   console.log(`Initialized ${activeTrains.size} trains`);
 
