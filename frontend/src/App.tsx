@@ -12,12 +12,12 @@ import Stats from "./dashboard/components/Stats/Stats";
 import { ThemeProvider } from "./components/ThemeProvider";
 import { Header } from "./components/Header";
 import { HeroSection } from "./components/HeroSection";
+import NotFound from "./components/NotFound.tsx";
 import { ProblemSection } from "./components/ProblemSection";
 import { SolutionSection } from "./components/SolutionSection";
 import { FeaturesSection } from "./components/FeaturesSection";
 import { BenefitsSection } from "./components/BenefitsSection";
 import { Footer } from "./components/Footer";
-import React, { useEffect, useState } from "react";
 import { UserProvider } from "./context/userContext";
 import { LoginPage } from "./components/pages/LoginPage";
 import { SignupPage } from "./components/pages/SignupPage";
@@ -29,6 +29,7 @@ import { ContactPage } from "./components/pages/ContactPage";
 import { PlaceholderPage } from "./components/pages/PlaceholderPage";
 import DashboardApp from "./dashboard/components/Dashboard/DashboardApp.tsx";
 import ScrollToTop from "./ScrollToTop.tsx";
+import ChatBot from "./dashboard/components/chatbot/ChatBot.tsx";
 
 
 function Layout() {
@@ -55,8 +56,6 @@ export default function App() {
           <Routes>
             <Route path="/login" element={<LoginPage />} />
             <Route path="/signup" element={<SignupPage />} />
-
-            {/* Routes that use the shared Layout */}
             <Route element={<Layout />}>
               <Route
                 path="/"
@@ -81,8 +80,6 @@ export default function App() {
               <Route path="/features" element={<FeaturesSection />} />
               <Route path="/solution" element={<SolutionSection />} />
               <Route path="/benefits" element={<BenefitsSection />} />
-
-              {/* All the placeholder/info pages */}
               <Route
                 path="/terms-of-service"
                 element={
@@ -181,7 +178,9 @@ export default function App() {
               <Route path="stats" element={<Stats />} />
               <Route path="add-train" element={<AddTrain />} />
               <Route path="profile" element={<Profile />} />
+              <Route path="chatbot" element={<ChatBot/>}></Route>
             </Route>
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </Router>
       </ThemeProvider>
