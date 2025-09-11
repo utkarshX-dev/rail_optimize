@@ -4,7 +4,7 @@ function Foooter() {
     <footer className="bg-white border-t shadow-sm w-full">
       <div className="max-w-7xl mx-auto px-4 py-4 flex flex-col md:flex-row items-center justify-between space-y-3 md:space-y-0">
         <div className="flex items-center space-x-2">
-          <span className="font-semibold text-blue-700">RailOptimize</span>
+          <span className="font-semibold text-blue-700">त्रिवेणीPath</span>
           <span className="text-gray-400 text-xs ml-2">© {new Date().getFullYear()} All rights reserved.</span>
         </div>
         <div className="flex space-x-4 text-xs text-gray-400">

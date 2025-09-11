@@ -86,7 +86,7 @@ export default function App() {
                 element={
                   <PlaceholderPage
                     title="Terms of Service"
-                    description="Our terms of service outline the conditions for using RailOptimize services and the rights and responsibilities of all parties."
+                    description="Our terms of service outline the conditions for using त्रिवेणीPath services and the rights and responsibilities of all parties."
                     badgeText="Legal Document"
                   />
                 }
@@ -145,7 +145,7 @@ export default function App() {
                 path="/about-us"
                 element={
                   <PlaceholderPage
-                    title="About RailOptimize"
+                    title="About त्रिवेणीPath"
                     description="Learn about our mission to transform railway operations through innovative AI and operations research solutions."
                     badgeText="Company Information"
                   />
