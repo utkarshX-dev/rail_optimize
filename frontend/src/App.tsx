@@ -59,6 +59,7 @@ const BenefitsSection = lazy(() => import("./components/BenefitsSection").then(m
 const NotFound = lazy(() => import("./components/NotFound"));
 const LoginPage = lazy(() => import("./components/pages/LoginPage"));
 const SignupPage = lazy(() => import("./components/pages/SignupPage"));
+const AdminLoginPage = lazy(() => import("./components/pages/AdminLoginPage"));
 const DemoPage = lazy(() => import("./components/pages/DemoPage").then(module => ({ default: module.DemoPage })));
 const LearnMorePage = lazy(() => import("./components/pages/LearnMorePage").then(module => ({ default: module.LearnMorePage })));
 const ProblemStatementPage = lazy(() => import("./components/pages/ProblemStatementPage").then(module => ({ default: module.ProblemStatementPage })));
@@ -117,10 +118,29 @@ function AuthGuard({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }
 
+// Admin Auth Guard (separate for admin login - redirects admin to admin dashboard)
+function AdminAuthGuard({ children }: { children: React.ReactNode }) {
+  const { token, user } = useContext(UserContext);
+
+  // If admin is already logged in, redirect to admin dashboard
+  if (token && user && user.role === 'admin') {
+    return <Navigate to="/dashboard/admin" replace />;
+  }
+
+  // If regular user is logged in, redirect to regular dashboard
+  if (token && user && user.role === 'user') {
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  return <>{children}</>;
+}
+
 function Layout() {
   const location = useLocation();
   const hideHeaderFooter =
-    location.pathname === "/login" || location.pathname === "/signup";
+    location.pathname === "/login" || 
+    location.pathname === "/signup" || 
+    location.pathname === "/admin/login";
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
@@ -161,6 +181,18 @@ export default function App() {
                     <SignupPage />
                   </Suspense>
                 </AuthGuard>
+              } 
+            />
+            
+            {/* Admin Login Route */}
+            <Route 
+              path="/admin/login" 
+              element={
+                <AdminAuthGuard>
+                  <Suspense fallback={<LoadingSpinner />}>
+                    <AdminLoginPage />
+                  </Suspense>
+                </AdminAuthGuard>
               } 
             />
 

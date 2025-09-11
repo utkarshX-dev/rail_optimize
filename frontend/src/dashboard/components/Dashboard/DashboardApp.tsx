@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Train, AlertTriangle, Clock, MapPin, Zap, Users, Activity } from 'lucide-react';
+import { Train, AlertTriangle, Clock, MapPin, Zap, Users, Activity, Plus } from 'lucide-react';
+import { motion } from 'framer-motion';
 import io from 'socket.io-client';
+import { useLanguage } from '../../context/LanguageContext';
 
 const API_BASE = 'http://localhost:5000/api';
 
@@ -20,10 +22,13 @@ const SimpleMapComponent = ({ trains = [], stations = {}, selectedTrain, setSele
           shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
         });
 
-        const map = L.map(mapRef.current).setView([25.0, 77.5], 6);
+        const map = L.map(mapRef.current, {
+          attributionControl: false
+        }).setView([25.0, 77.5], 6);
         
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        // Dark theme tiles
+        L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png', {
+          attribution: '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>'
         }).addTo(map);
 
         leafletMapRef.current = map;
@@ -73,27 +78,29 @@ const SimpleMapComponent = ({ trains = [], stations = {}, selectedTrain, setSele
               background: ${color}; 
               color: white; 
               border-radius: 50%; 
-              width: 20px; 
-              height: 20px; 
+              width: 24px; 
+              height: 24px; 
               display: flex; 
               align-items: center; 
               justify-content: center; 
-              font-size: 10px; 
+              font-size: 12px; 
               font-weight: bold;
-              border: 2px solid white;
-              box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+              border: 3px solid white;
+              box-shadow: 0 4px 8px rgba(0,0,0,0.4);
             ">🚂</div>`,
             className: 'custom-train-icon',
-            iconSize: [20, 20]
+            iconSize: [24, 24]
           });
 
           const marker = L.marker([position.lat, position.lng], { icon: trainIcon })
             .bindPopup(`
-              <strong>${train.name || train.id}</strong><br/>
-              Type: ${train.type}<br/>
-              Status: ${train.status}<br/>
-              Speed: ${train.speed} km/h<br/>
-              ${train.delay > 0 ? `Delay: +${train.delay} min` : ''}
+              <div style="background: #1e293b; color: white; padding: 8px; border-radius: 8px;">
+                <strong style="color: #60a5fa;">${train.name || train.id}</strong><br/>
+                <span style="color: #94a3b8;">Type:</span> ${train.type}<br/>
+                <span style="color: #94a3b8;">Status:</span> ${train.status}<br/>
+                <span style="color: #94a3b8;">Speed:</span> ${train.speed} km/h<br/>
+                ${train.delay > 0 ? `<span style="color: #f87171;">Delay: +${train.delay} min</span>` : ''}
+              </div>
             `)
             .addTo(leafletMapRef.current);
 
@@ -128,10 +135,34 @@ const SimpleMapComponent = ({ trains = [], stations = {}, selectedTrain, setSele
     <div 
       ref={mapRef} 
       style={{ height: '500px', width: '100%' }}
-      className="leaflet-container"
+      className="leaflet-container rounded-xl border border-white/20"
     />
   );
 };
+
+const StatCard = ({ icon, label, value, color, bgColor, trend }) => (
+  <motion.div
+    whileHover={{ scale: 1.05, y: -5 }}
+    whileTap={{ scale: 0.98 }}
+    className={`relative overflow-hidden bg-gradient-to-br ${bgColor} rounded-2xl p-6 shadow-lg border border-white/10 backdrop-blur-sm`}
+  >
+    <div className="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-full -translate-y-10 translate-x-10"></div>
+    <div className="relative z-10">
+      <div className="flex items-center justify-between mb-4">
+        <div className="p-3 rounded-xl bg-white/20 backdrop-blur-sm">
+          {icon}
+        </div>
+        {trend && (
+          <div className="text-sm font-medium text-white/90">
+            {trend > 0 ? '↗️' : '↘️'} {Math.abs(trend)}%
+          </div>
+        )}
+      </div>
+      <p className="text-white/80 text-sm mb-2">{label}</p>
+      <p className="text-white text-3xl font-bold">{value}</p>
+    </div>
+  </motion.div>
+);
 
 const TrainCoordinationDashboard = () => {
   const [trains, setTrains] = useState([]);
@@ -147,6 +178,7 @@ const TrainCoordinationDashboard = () => {
   const [selectedTrain, setSelectedTrain] = useState(null);
   const [isConnected, setIsConnected] = useState(false);
   const socketRef = useRef(null);
+  const { t, language } = useLanguage();
 
   // Load Leaflet CSS dynamically
   useEffect(() => {
@@ -294,67 +326,88 @@ const TrainCoordinationDashboard = () => {
       console.error('Error adding train:', error);
     }
   };
-    return (
-      <div className="min-h-screen bg-gray-100 pt-16">
-      <div className="max-w-7xl mx-auto px-4 py-6">
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-          {/* Network Stats */}
-          <div className="lg:col-span-4 grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-            <div className="bg-white p-4 rounded-lg shadow-sm">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-600">Active Trains</p>
-                  <p className="text-2xl font-bold text-blue-600">{networkStats.activeTrains}</p>
-                </div>
-                <Activity className="w-8 h-8 text-blue-600" />
-              </div>
-            </div>
-            
-            <div className="bg-white p-4 rounded-lg shadow-sm">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-600">Delayed Trains</p>
-                  <p className="text-2xl font-bold text-orange-600">{networkStats.delayedTrains}</p>
-                </div>
-                <Clock className="w-8 h-8 text-orange-600" />
-              </div>
-            </div>
-            
-            <div className="bg-white p-4 rounded-lg shadow-sm">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-600">Avg Delay (min)</p>
-                  <p className="text-2xl font-bold text-red-600">{networkStats.averageDelay}</p>
-                </div>
-                <AlertTriangle className="w-8 h-8 text-red-600" />
-              </div>
-            </div>
-            
-            <div className="bg-white p-4 rounded-lg shadow-sm">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-600">Network Efficiency</p>
-                  <p className="text-2xl font-bold text-green-600">{networkStats.efficiency}%</p>
-                </div>
-                <Zap className="w-8 h-8 text-green-600" />
-              </div>
-            </div>
-          </div>
 
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-indigo-900 p-6">
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-center mb-8"
+        >
+          <h1 className="text-4xl font-bold text-white mb-2">
+            🚆 {language === 'HI' ? 'ट्रेन समन्वय डैशबोर्ड' : 'Train Coordination Dashboard'}
+          </h1>
+          <p className="text-slate-300 text-lg">
+            {language === 'HI' ? 'रियल-टाइम नेटवर्क निगरानी और AI संघर्ष समाधान' : 'Real-time network monitoring and AI conflict resolution'}
+          </p>
+          <div className="flex items-center justify-center gap-2 mt-4">
+            <div className={`w-3 h-3 rounded-full ${isConnected ? 'bg-green-500' : 'bg-red-500'}`}></div>
+            <span className="text-sm text-slate-300">
+              {isConnected ? (language === 'HI' ? 'कनेक्टेड' : 'Connected') : (language === 'HI' ? 'डिस्कनेक्टेड' : 'Disconnected')}
+            </span>
+          </div>
+        </motion.div>
+
+        {/* Network Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <StatCard
+            icon={<Activity className="w-6 h-6 text-white" />}
+            label={language === 'HI' ? 'सक्रिय ट्रेनें' : 'Active Trains'}
+            value={networkStats.activeTrains}
+            bgColor="from-blue-600 to-blue-700"
+            trend={5.2}
+          />
+          <StatCard
+            icon={<Clock className="w-6 h-6 text-white" />}
+            label={language === 'HI' ? 'विलंबित ट्रेनें' : 'Delayed Trains'}
+            value={networkStats.delayedTrains}
+            bgColor="from-orange-500 to-red-500"
+            trend={-12.1}
+          />
+          <StatCard
+            icon={<AlertTriangle className="w-6 h-6 text-white" />}
+            label={language === 'HI' ? 'औसत देरी (मिनट)' : 'Avg Delay (min)'}
+            value={networkStats.averageDelay}
+            bgColor="from-red-600 to-red-700"
+            trend={-8.3}
+          />
+          <StatCard
+            icon={<Zap className="w-6 h-6 text-white" />}
+            label={language === 'HI' ? 'नेटवर्क दक्षता' : 'Network Efficiency'}
+            value={`${networkStats.efficiency}%`}
+            bgColor="from-green-500 to-emerald-600"
+            trend={3.1}
+          />
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Map */}
-          <div className="lg:col-span-3">
-            <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-              <div className="p-4 border-b flex items-center justify-between">
-                <h2 className="text-lg font-semibold">Live Train Network</h2>
-                <p className="text-sm text-gray-600">
-                  Showing {trains.length} trains, {conflicts.length} conflicts
-                </p>
-                <button
-                  onClick={addNewTrain}
-                  className="mt-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
-                >
-                  Add Random Train
-                </button>
+          <div className="lg:col-span-2">
+            <motion.div
+              whileHover={{ scale: 1.01 }}
+              className="bg-white/10 backdrop-blur-sm rounded-2xl border border-white/20 overflow-hidden"
+            >
+              <div className="p-6 border-b border-white/10 flex items-center justify-between">
+                <h2 className="text-xl font-semibold text-white flex items-center">
+                  <MapPin className="w-5 h-5 mr-2" />
+                  {language === 'HI' ? 'लाइव ट्रेन नेटवर्क' : 'Live Train Network'}
+                </h2>
+                <div className="flex items-center gap-4">
+                  <p className="text-sm text-slate-300">
+                    {trains.length} {language === 'HI' ? 'ट्रेनें' : 'trains'}, {conflicts.length} {language === 'HI' ? 'संघर्ष' : 'conflicts'}
+                  </p>
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={addNewTrain}
+                    className="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors"
+                  >
+                    <Plus className="w-4 h-4" />
+                    {language === 'HI' ? 'ट्रेन जोड़ें' : 'Add Train'}
+                  </motion.button>
+                </div>
               </div>
               <SimpleMapComponent 
                 trains={trains}
@@ -362,40 +415,45 @@ const TrainCoordinationDashboard = () => {
                 selectedTrain={selectedTrain}
                 setSelectedTrain={setSelectedTrain}
               />
-            </div>
+            </motion.div>
           </div>
 
           {/* Sidebar */}
           <div className="space-y-6">
             {/* Conflicts */}
-            <div className="bg-white rounded-lg shadow-sm">
-              <div className="p-4 border-b">
-                <h3 className="font-semibold flex items-center">
-                  <AlertTriangle className="w-5 h-5 text-red-500 mr-2" />
-                  Active Conflicts ({conflicts.length})
+            <motion.div
+              whileHover={{ scale: 1.02 }}
+              className="bg-white/10 backdrop-blur-sm rounded-2xl border border-white/20"
+            >
+              <div className="p-4 border-b border-white/10">
+                <h3 className="font-semibold text-white flex items-center">
+                  <AlertTriangle className="w-5 h-5 text-red-400 mr-2" />
+                  {language === 'HI' ? 'सक्रिय संघर्ष' : 'Active Conflicts'} ({conflicts.length})
                 </h3>
               </div>
               <div className="p-4 max-h-64 overflow-y-auto">
                 {conflicts.length === 0 ? (
-                  <p className="text-gray-500 text-sm">No conflicts detected</p>
+                  <p className="text-slate-400 text-sm">
+                    {language === 'HI' ? 'कोई संघर्ष नहीं मिला' : 'No conflicts detected'}
+                  </p>
                 ) : (
                   <div className="space-y-3">
                     {conflicts.map(conflict => (
-                      <div key={conflict.id || `${conflict.station}-${Date.now()}`} className="border rounded-lg p-3 bg-red-50">
+                      <div key={conflict.id || `${conflict.station}-${Date.now()}`} className="border border-red-500/30 rounded-lg p-3 bg-red-500/10">
                         <div className="flex items-center justify-between mb-2">
-                          <span className="font-medium text-red-800">
+                          <span className="font-medium text-red-300">
                             {stations[conflict.station]?.name || conflict.station}
                           </span>
-                          <span className="text-xs text-red-600 bg-red-100 px-2 py-1 rounded">
+                          <span className="text-xs text-red-400 bg-red-500/20 px-2 py-1 rounded">
                             {conflict.severity}
                           </span>
                         </div>
                         <div className="text-sm space-y-1">
-                          <p className="text-gray-600">Trains involved:</p>
+                          <p className="text-slate-300">{language === 'HI' ? 'संबंधित ट्रेनें:' : 'Trains involved:'}</p>
                           {conflict.trains.map(train => (
                             <div key={train.id} className="flex justify-between">
-                              <span>{train.name || train.id} ({train.type})</span>
-                              <span className="text-gray-600">P{train.priority}</span>
+                              <span className="text-slate-300">{train.name || train.id} ({train.type})</span>
+                              <span className="text-slate-400">P{train.priority}</span>
                             </div>
                           ))}
                         </div>
@@ -404,32 +462,37 @@ const TrainCoordinationDashboard = () => {
                   </div>
                 )}
               </div>
-            </div>
+            </motion.div>
 
             {/* Recent AI Decisions */}
-            <div className="bg-white rounded-lg shadow-sm">
-              <div className="p-4 border-b">
-                <h3 className="font-semibold flex items-center">
-                  <Zap className="w-5 h-5 text-blue-500 mr-2" />
-                  AI Decisions
+            <motion.div
+              whileHover={{ scale: 1.02 }}
+              className="bg-white/10 backdrop-blur-sm rounded-2xl border border-white/20"
+            >
+              <div className="p-4 border-b border-white/10">
+                <h3 className="font-semibold text-white flex items-center">
+                  <Zap className="w-5 h-5 text-blue-400 mr-2" />
+                  {language === 'HI' ? 'AI निर्णय' : 'AI Decisions'}
                 </h3>
               </div>
               <div className="p-4 max-h-64 overflow-y-auto">
                 <div className="space-y-3">
                   {alerts.length === 0 ? (
-                    <p className="text-gray-500 text-sm">No recent decisions</p>
+                    <p className="text-slate-400 text-sm">
+                      {language === 'HI' ? 'कोई हाल का निर्णय नहीं' : 'No recent decisions'}
+                    </p>
                   ) : (
                     alerts.slice(0, 5).map(alert => (
-                      <div key={alert.id} className="border rounded-lg p-3 bg-blue-50">
+                      <div key={alert.id} className="border border-blue-500/30 rounded-lg p-3 bg-blue-500/10">
                         <div className="flex items-start justify-between">
                           <div className="flex-1">
-                            <p className="text-sm font-medium text-blue-800">{alert.message}</p>
+                            <p className="text-sm font-medium text-blue-300">{alert.message}</p>
                             {alert.aiDecision && (
                               <div className="mt-2 text-xs space-y-1">
                                 {alert.aiDecision.decisions?.map(decision => (
                                   <div key={decision.trainId} className="flex justify-between">
-                                    <span className="truncate">{decision.trainId}:</span>
-                                    <span className={decision.action === 'PROCEED' ? 'text-green-600' : 'text-orange-600'}>
+                                    <span className="truncate text-slate-300">{decision.trainId}:</span>
+                                    <span className={decision.action === 'PROCEED' ? 'text-green-400' : 'text-orange-400'}>
                                       {decision.action}
                                     </span>
                                   </div>
@@ -437,7 +500,7 @@ const TrainCoordinationDashboard = () => {
                               </div>
                             )}
                           </div>
-                          <span className="text-xs text-gray-500 ml-2">
+                          <span className="text-xs text-slate-400 ml-2">
                             {alert.timestamp.toLocaleTimeString()}
                           </span>
                         </div>
@@ -446,34 +509,43 @@ const TrainCoordinationDashboard = () => {
                   )}
                 </div>
               </div>
-            </div>
+            </motion.div>
 
             {/* Train List */}
-            <div className="bg-white rounded-lg shadow-sm">
-              <div className="p-4 border-b">
-                <h3 className="font-semibold flex items-center">
-                  <Train className="w-5 h-5 text-gray-700 mr-2" />
-                  Active Trains ({trains.length})
+            <motion.div
+              whileHover={{ scale: 1.02 }}
+              className="bg-white/10 backdrop-blur-sm rounded-2xl border border-white/20"
+            >
+              <div className="p-4 border-b border-white/10">
+                <h3 className="font-semibold text-white flex items-center">
+                  <Train className="w-5 h-5 text-indigo-400 mr-2" />
+                  {language === 'HI' ? 'सक्रिय ट्रेनें' : 'Active Trains'} ({trains.length})
                 </h3>
               </div>
               <div className="p-4 max-h-64 overflow-y-auto">
                 <div className="space-y-2">
                   {trains.length === 0 ? (
-                    <p className="text-gray-500 text-sm">No trains active</p>
+                    <p className="text-slate-400 text-sm">
+                      {language === 'HI' ? 'कोई ट्रेन सक्रिय नहीं' : 'No trains active'}
+                    </p>
                   ) : (
                     trains.map(train => (
-                      <div
+                      <motion.div
                         key={train.id}
-                        className={`p-3 rounded-lg border cursor-pointer transition-colors ${
-                          selectedTrain?.id === train.id ? 'bg-blue-50 border-blue-300' : 'hover:bg-gray-50'
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        className={`p-3 rounded-lg border cursor-pointer transition-all duration-200 ${
+                          selectedTrain?.id === train.id 
+                            ? 'bg-indigo-500/20 border-indigo-400' 
+                            : 'bg-white/5 border-white/10 hover:bg-white/10'
                         }`}
                         onClick={() => setSelectedTrain(train)}
                       >
                         <div className="flex justify-between items-center">
                           <div>
-                            <p className="font-medium text-sm">{train.name || train.id}</p>
-                            <p className="text-xs text-gray-600">{train.type} | P{train.priority}</p>
-                            <p className="text-xs text-gray-500">
+                            <p className="font-medium text-sm text-white">{train.name || train.id}</p>
+                            <p className="text-xs text-slate-300">{train.type} | P{train.priority}</p>
+                            <p className="text-xs text-slate-400">
                               {stations[train.currentStation]?.name || train.currentStation} → {
                                 train.nextStation ? (stations[train.nextStation]?.name || train.nextStation) : 'End'
                               }
@@ -481,24 +553,24 @@ const TrainCoordinationDashboard = () => {
                           </div>
                           <div className="text-right">
                             <p className={`text-xs px-2 py-1 rounded ${
-                              train.status === 'running' ? 'bg-green-100 text-green-800' :
-                              train.status === 'delayed' ? 'bg-orange-100 text-orange-800' :
-                              train.status === 'held' ? 'bg-red-100 text-red-800' :
-                              'bg-gray-100 text-gray-800'
+                              train.status === 'running' ? 'bg-green-500/20 text-green-300' :
+                              train.status === 'delayed' ? 'bg-orange-500/20 text-orange-300' :
+                              train.status === 'held' ? 'bg-red-500/20 text-red-300' :
+                              'bg-gray-500/20 text-gray-300'
                             }`}>
                               {train.status}
                             </p>
                             {train.delay > 0 && (
-                              <p className="text-xs text-red-600 mt-1">+{train.delay}min</p>
+                              <p className="text-xs text-red-400 mt-1">+{train.delay}min</p>
                             )}
                           </div>
                         </div>
-                      </div>
+                      </motion.div>
                     ))
                   )}
                 </div>
               </div>
-            </div>
+            </motion.div>
           </div>
         </div>
       </div>
@@ -506,4 +578,4 @@ const TrainCoordinationDashboard = () => {
   );
 };
 
-export default TrainCoordinationDashboard;  
+export default TrainCoordinationDashboard;

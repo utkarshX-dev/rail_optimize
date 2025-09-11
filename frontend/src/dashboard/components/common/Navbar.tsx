@@ -46,12 +46,14 @@ function Navbar() {
               >
                 {t('analytics')}
               </Link>
-              <Link
-                to="/dashboard/add-train"
-                className="text-base font-medium text-slate-300 hover:bg-slate-800 hover:text-indigo-300 px-4 py-2 rounded-xl transition-all duration-200 border border-transparent hover:border-slate-600"
-              >
-                {t('addTrain')}
-              </Link>
+              {user && user.role === 'admin' && (
+                <Link
+                  to="/dashboard/admin"
+                  className="text-base font-medium text-slate-300 hover:bg-slate-800 hover:text-indigo-300 px-4 py-2 rounded-xl transition-all duration-200 border border-transparent hover:border-slate-600"
+                >
+                  {t('Admin Panel')}
+                </Link>
+              )}
             </div>
           </div>
           

@@ -129,6 +129,7 @@ export function Header() {
     { label: "Solution", path: "/solution" },
     { label: "Features", path: "/features" },
     { label: "Benefits", path: "/benefits" },
+    { label: "Admin Login", path: "/admin/login" },
   ];
 
   return (

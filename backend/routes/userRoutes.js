@@ -5,5 +5,5 @@ const {login, register, adminLogin, getUsers} = require('../controllers/userCont
 router.post('/login', wrapAsync(login));
 router.post('/register', wrapAsync(register));
 router.post('/admin/login', wrapAsync(adminLogin));
-router.get('/admin/users', wrapAsync(getUsers));
+router.get('/admin/:id', wrapAsync(getUsers));
 module.exports = router;

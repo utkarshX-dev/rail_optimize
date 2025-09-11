@@ -1,15 +1,14 @@
 const CompletedJourney = require("../models/completedJourney.js");
+const User = require("../models/userModel.js");
 const wrapAsync = require("../utils/wrapAsync.js");
 const getJourneys = wrapAsync(async (req, res) => {
-  const {role} = req.body;
-  if(role !== 'admin') {
+  const id = req.params.id;
+  const admin = await User.findById(id);
+  if (!admin || admin.role !== 'admin') {
     return res.status(403).json({ message: "Access denied" });
   }
-  const journeys = await CompletedJourney.find().sort({ completedAt: -1 });
-  res.json({
-    totalCompleted: journeys.length,
-    journeys,
-  });
+  const journeys = await CompletedJourney.find().sort({ createdAt: -1 });
+  res.json(journeys);
 })
 const postJourneys = wrapAsync(async (req, res) => {
   const { trainId, trainName, type, route, totalDelay } = req.body;
