@@ -21,12 +21,14 @@ const stationCoordinates = {
   LKO: { lat: 26.8467, lng: 80.9462, name: "Lucknow" }
 };
 
-// Enhanced Map Component with real-time train movement - FIXED VERSION
+// Enhanced Map Component with smooth real-time train movement
 const EnhancedTrainMap = ({ trains = [], selectedTrain, setSelectedTrain }) => {
   const mapRef = useRef(null);
   const leafletMapRef = useRef(null);
   const markersRef = useRef({});
   const trainMarkersRef = useRef({});
+  const animationFrameRef = useRef({});
+  const trainPositionsRef = useRef({});
   const [mapInitialized, setMapInitialized] = useState(false);
   const leafletLoadedRef = useRef(false);
 
@@ -35,7 +37,6 @@ const EnhancedTrainMap = ({ trains = [], selectedTrain, setSelectedTrain }) => {
     let mounted = true;
 
     const initializeMap = async () => {
-      // Prevent multiple initializations
       if (leafletLoadedRef.current || !mapRef.current || !mounted) {
         return;
       }
@@ -62,10 +63,10 @@ const EnhancedTrainMap = ({ trains = [], selectedTrain, setSelectedTrain }) => {
 
         // Initialize map
         const map = L.map(mapRef.current, {
-          center: [23.5, 77.5], // Center of India
+          center: [23.5, 77.5],
           zoom: 5,
           zoomControl: true,
-          preferCanvas: true // Better performance for many markers
+          preferCanvas: true
         });
         
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -97,9 +98,13 @@ const EnhancedTrainMap = ({ trains = [], selectedTrain, setSelectedTrain }) => {
 
     initializeMap();
 
-    // Cleanup function
     return () => {
       mounted = false;
+      // Cancel all animation frames
+      Object.values(animationFrameRef.current).forEach(frameId => {
+        if (frameId) cancelAnimationFrame(frameId);
+      });
+      
       if (leafletMapRef.current) {
         try {
           leafletMapRef.current.remove();
@@ -111,131 +116,211 @@ const EnhancedTrainMap = ({ trains = [], selectedTrain, setSelectedTrain }) => {
       leafletLoadedRef.current = false;
       setMapInitialized(false);
     };
-  }, []); // Empty dependency array - only run once
+  }, []);
 
-  // Update train positions when trains data changes
-  useEffect(() => {
-    if (!mapInitialized || !leafletMapRef.current || !trains.length) return;
-
-    const updateTrainMarkers = async () => {
-      try {
-        const L = await import('leaflet');
-
-        // Clear existing train markers efficiently
-        Object.values(trainMarkersRef.current).forEach(marker => {
-          if (marker && leafletMapRef.current && leafletMapRef.current.hasLayer(marker)) {
-            leafletMapRef.current.removeLayer(marker);
-          }
-        });
-        trainMarkersRef.current = {};
-
-        // Add updated train markers
-        const validTrains = trains.filter(train => train.status !== 'completed');
-        
-        validTrains.forEach(train => {
-          const position = calculateTrainPosition(train);
-          if (!position) return;
-
-          const color = getTrainColor(train.type);
-          
-          const trainIcon = L.divIcon({
-            html: `<div style="
-              background: ${color}; 
-              color: white; 
-              border-radius: 50%; 
-              width: 20px; 
-              height: 20px; 
-              display: flex; 
-              align-items: center; 
-              justify-content: center; 
-              font-size: 10px; 
-              font-weight: bold;
-              border: 2px solid white;
-              box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-            ">🚂</div>`,
-            className: 'custom-train-icon',
-            iconSize: [20, 20],
-            iconAnchor: [10, 10]
-          });
-
-          const marker = L.marker([position.lat, position.lng], { 
-            icon: trainIcon,
-            title: train.name || train.id
-          }).addTo(leafletMapRef.current);
-
-          // Enhanced popup with more details
-          const popupContent = `
-            <div style="min-width: 200px;">
-              <h4 style="margin: 0 0 8px 0; color: ${color};">${train.name || train.id}</h4>
-              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4px; font-size: 12px;">
-                <span><strong>Type:</strong> ${train.type}</span>
-                <span><strong>Priority:</strong> ${train.priority}</span>
-                <span><strong>Status:</strong> ${train.status}</span>
-                <span><strong>Speed:</strong> ${train.speed} km/h</span>
-                <span><strong>Current:</strong> ${stationCoordinates[train.currentStation]?.name || train.currentStation}</span>
-                <span><strong>Next:</strong> ${train.nextStation ? (stationCoordinates[train.nextStation]?.name || train.nextStation) : 'Journey End'}</span>
-                ${train.delay > 0 ? `<span style="color: red;"><strong>Delay:</strong> +${train.delay} min</span>` : ''}
-                ${train.currentDelay > 0 ? `<span style="color: orange;"><strong>Current Delay:</strong> +${train.currentDelay.toFixed(1)} min</span>` : ''}
-              </div>
-              <div style="margin-top: 8px; font-size: 11px; color: #666;">
-                Route: ${train.route?.map(code => stationCoordinates[code]?.name || code).join(' → ') || 'No route'}
-              </div>
-            </div>
-          `;
-          
-          marker.bindPopup(popupContent);
-          marker.on('click', () => {
-            setSelectedTrain(train);
-          });
-
-          trainMarkersRef.current[`train-${train.id}`] = marker;
-        });
-
-        console.log(`Updated ${validTrains.length} train markers on map`);
-      } catch (error) {
-        console.error('Error updating train markers:', error);
-      }
-    };
-
-    updateTrainMarkers();
-  }, [trains, mapInitialized, setSelectedTrain]);
-
-  // Calculate train position between stations
-  const calculateTrainPosition = (train) => {
+  // Smooth train position calculation with continuous interpolation
+  const calculateSmoothTrainPosition = (train, currentTime) => {
     if (!train.currentStation || !stationCoordinates[train.currentStation]) {
-      console.warn('Invalid current station for train:', train.id, train.currentStation);
       return null;
     }
 
     const currentStation = stationCoordinates[train.currentStation];
     
-    // If no next station or completed, place at current station
+    // If no next station or completed, stay at current station
     if (!train.nextStation || train.status === 'completed' || !stationCoordinates[train.nextStation]) {
-      return { lat: currentStation.lat, lng: currentStation.lng };
+      return { 
+        lat: currentStation.lat, 
+        lng: currentStation.lng,
+        progress: 0,
+        isStationary: true 
+      };
     }
 
     const nextStation = stationCoordinates[train.nextStation];
     
-    // Calculate progress based on time since last move
-    const now = Date.now();
-    const timeSinceLastMove = now - (train.lastMoveTime || now);
+    // Calculate travel parameters
     const baseTravelTime = 30 * 1000; // 30 seconds base travel time
     const delayTime = ((train.currentDelay || train.delay || 0) * 1000);
     const speedFactor = (train.speed || 60) / 60;
     const effectiveTravelTime = (baseTravelTime / speedFactor) + delayTime;
     
-    // Calculate progress (0 to 1)
+    // Use last move time from the train data
+    const timeSinceLastMove = currentTime - (train.lastMoveTime || currentTime);
+    
+    // Calculate smooth progress (0 to 1)
     let progress = Math.min(timeSinceLastMove / effectiveTravelTime, 1);
     
-    // Add some subtle randomness for smooth movement
-    const smoothingFactor = Math.sin(now / 5000) * 0.02; // Very subtle oscillation
-    progress = Math.max(0, Math.min(1, progress + smoothingFactor));
+    // Apply easing function for smoother movement (ease-in-out)
+    progress = progress < 0.5 
+      ? 2 * progress * progress 
+      : -1 + (4 - 2 * progress) * progress;
 
-    // Interpolate position
+    // Clamp progress between 0 and 1
+    progress = Math.max(0, Math.min(1, progress));
+
+    // Smooth interpolation between stations
     const lat = currentStation.lat + (nextStation.lat - currentStation.lat) * progress;
     const lng = currentStation.lng + (nextStation.lng - currentStation.lng) * progress;
     
-    return { lat, lng };
+    return { 
+      lat, 
+      lng, 
+      progress,
+      isStationary: false,
+      nextStation: nextStation,
+      currentStation: currentStation
+    };
+  };
+
+  // Animation loop for smooth train movement
+  const animateTrains = async () => {
+    if (!mapInitialized || !leafletMapRef.current || !trains.length) return;
+
+    try {
+      const L = await import('leaflet');
+      const currentTime = Date.now();
+      
+      const validTrains = trains.filter(train => train.status !== 'completed');
+      
+      for (const train of validTrains) {
+        const position = calculateSmoothTrainPosition(train, currentTime);
+        if (!position) continue;
+
+        const trainKey = `train-${train.id}`;
+        const existingMarker = trainMarkersRef.current[trainKey];
+        
+        if (existingMarker) {
+          // Smooth marker movement using setLatLng with animation
+          const newLatLng = L.latLng(position.lat, position.lng);
+          const currentLatLng = existingMarker.getLatLng();
+          
+          // Only animate if position actually changed significantly
+          const distance = currentLatLng.distanceTo(newLatLng);
+          if (distance > 1) { // Only move if more than 1 meter difference
+            // Animate to new position
+            existingMarker.setLatLng(newLatLng);
+            
+            // Update popup content with current info
+            const popupContent = createTrainPopupContent(train, position);
+            existingMarker.setPopupContent(popupContent);
+          }
+        } else {
+          // Create new marker
+          const color = getTrainColor(train.type);
+          const trainIcon = createTrainIcon(color, train);
+          
+          const marker = L.marker([position.lat, position.lng], { 
+            icon: trainIcon,
+            title: train.name || train.id
+          }).addTo(leafletMapRef.current);
+
+          const popupContent = createTrainPopupContent(train, position);
+          marker.bindPopup(popupContent);
+          
+          marker.on('click', () => {
+            setSelectedTrain(train);
+          });
+
+          trainMarkersRef.current[trainKey] = marker;
+        }
+        
+        // Store position for reference
+        trainPositionsRef.current[train.id] = position;
+      }
+
+      // Clean up markers for completed/removed trains
+      Object.keys(trainMarkersRef.current).forEach(key => {
+        const trainId = key.replace('train-', '');
+        const trainExists = validTrains.some(t => t.id === trainId);
+        
+        if (!trainExists) {
+          const marker = trainMarkersRef.current[key];
+          if (marker && leafletMapRef.current && leafletMapRef.current.hasLayer(marker)) {
+            leafletMapRef.current.removeLayer(marker);
+          }
+          delete trainMarkersRef.current[key];
+          delete trainPositionsRef.current[trainId];
+        }
+      });
+
+    } catch (error) {
+      console.error('Error in animation loop:', error);
+    }
+  };
+
+  // Create train icon
+  const createTrainIcon = (color, train) => {
+    const iconHtml = `
+      <div style="
+        background: ${color}; 
+        color: white; 
+        border-radius: 50%; 
+        width: 24px; 
+        height: 24px; 
+        display: flex; 
+        align-items: center; 
+        justify-content: center; 
+        font-size: 12px; 
+        font-weight: bold;
+        border: 3px solid white;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+        transition: all 0.3s ease;
+        transform: scale(1);
+      ">🚂</div>
+    `;
+
+    return L.divIcon({
+      html: iconHtml,
+      className: 'smooth-train-icon',
+      iconSize: [24, 24],
+      iconAnchor: [12, 12]
+    });
+  };
+
+  // Create train popup content
+  const createTrainPopupContent = (train, position) => {
+    const color = getTrainColor(train.type);
+    const progressPercent = position ? Math.round(position.progress * 100) : 0;
+    
+    return `
+      <div style="min-width: 220px; font-family: system-ui;">
+        <h4 style="margin: 0 0 12px 0; color: ${color}; font-size: 16px;">
+          ${train.name || train.id}
+        </h4>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 13px;">
+          <div><strong>Type:</strong> ${train.type}</div>
+          <div><strong>Priority:</strong> ${train.priority}</div>
+          <div><strong>Status:</strong> 
+            <span style="color: ${train.status === 'running' ? '#059669' : '#dc2626'};">
+              ${train.status}
+            </span>
+          </div>
+          <div><strong>Speed:</strong> ${train.speed} km/h</div>
+          <div style="grid-column: 1 / -1;">
+            <strong>Current:</strong> ${stationCoordinates[train.currentStation]?.name || train.currentStation}
+          </div>
+          <div style="grid-column: 1 / -1;">
+            <strong>Next:</strong> ${train.nextStation ? (stationCoordinates[train.nextStation]?.name || train.nextStation) : 'Journey End'}
+          </div>
+          ${train.nextStation ? `
+            <div style="grid-column: 1 / -1; margin-top: 4px;">
+              <div style="background: #f0f0f0; border-radius: 10px; height: 6px; overflow: hidden;">
+                <div style="background: ${color}; height: 100%; width: ${progressPercent}%; transition: width 1s ease-out;"></div>
+              </div>
+              <div style="font-size: 11px; color: #666; margin-top: 2px;">Progress: ${progressPercent}%</div>
+            </div>
+          ` : ''}
+          ${(train.delay > 0 || train.currentDelay > 0) ? `
+            <div style="grid-column: 1 / -1; color: #dc2626; margin-top: 4px;">
+              <strong>Delay:</strong> +${Math.max(train.delay || 0, train.currentDelay || 0).toFixed(1)} min
+            </div>
+          ` : ''}
+        </div>
+        <div style="margin-top: 10px; font-size: 11px; color: #666; border-top: 1px solid #eee; padding-top: 6px;">
+          <strong>Route:</strong> ${train.route?.map(code => stationCoordinates[code]?.name || code).join(' → ') || 'No route'}
+        </div>
+      </div>
+    `;
   };
 
   const getTrainColor = (type) => {
@@ -246,6 +331,50 @@ const EnhancedTrainMap = ({ trains = [], selectedTrain, setSelectedTrain }) => {
       default: return '#6b7280';        // Gray
     }
   };
+
+  // Start animation loop when map is ready and trains are available
+  useEffect(() => {
+    if (!mapInitialized || !trains.length) return;
+
+    // Start smooth animation loop
+    const startAnimation = () => {
+      animateTrains();
+      // Use requestAnimationFrame for smooth 60fps animation
+      animationFrameRef.current.main = requestAnimationFrame(startAnimation);
+    };
+
+    startAnimation();
+
+    return () => {
+      if (animationFrameRef.current.main) {
+        cancelAnimationFrame(animationFrameRef.current.main);
+      }
+    };
+  }, [trains, mapInitialized, setSelectedTrain]);
+
+  // Add custom CSS for smooth animations
+  useEffect(() => {
+    const style = document.createElement('style');
+    style.textContent = `
+      .smooth-train-icon {
+        transition: transform 0.3s ease !important;
+      }
+      .smooth-train-icon:hover {
+        transform: scale(1.2) !important;
+        z-index: 1000 !important;
+      }
+      .leaflet-marker-pane .smooth-train-icon {
+        transition: all 0.2s ease-out !important;
+      }
+    `;
+    document.head.appendChild(style);
+
+    return () => {
+      if (document.head.contains(style)) {
+        document.head.removeChild(style);
+      }
+    };
+  }, []);
 
   return (
     <div className="relative w-full h-[500px]">
@@ -259,6 +388,17 @@ const EnhancedTrainMap = ({ trains = [], selectedTrain, setSelectedTrain }) => {
           <div className="text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-2"></div>
             <p className="text-gray-600">Loading map...</p>
+          </div>
+        </div>
+      )}
+      {mapInitialized && (
+        <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm rounded-lg px-3 py-2 text-sm shadow-lg">
+          <div className="flex items-center space-x-2">
+            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+            <span className="font-medium">Live Tracking</span>
+          </div>
+          <div className="text-xs text-gray-600 mt-1">
+            {trains.filter(t => t.status !== 'completed').length} trains active
           </div>
         </div>
       )}
@@ -315,23 +455,15 @@ const TrainCoordinationDashboard = () => {
 
     socketRef.current.on('initial-state', (data) => {
       console.log('Received initial state:', data);
-      if (data.stations && Array.isArray(data.stations)) {
-        console.log('Stations received:', data.stations);
-      }
       if (data.conflicts) setConflicts(data.conflicts);
-      
-      // Load trains data separately
       loadTrainsData();
     });
 
-    // Listen for quick updates (every 5 seconds from your server)
     socketRef.current.on('quick_update', (data) => {
       console.log('Quick update received:', data);
       updateNetworkStats(data);
-      // Don't reload trains data here to prevent excessive API calls
     });
 
-    // Listen for detailed train updates (every 15 seconds)
     socketRef.current.on('trains_updated', (trainsData) => {
       console.log('Trains updated:', trainsData);
       if (trainsData && trainsData.length > 0) {
@@ -340,7 +472,6 @@ const TrainCoordinationDashboard = () => {
       }
     });
 
-    // Listen for AI decisions
     socketRef.current.on('ai_decision', (decision) => {
       console.log('AI decision received:', decision);
       
@@ -356,7 +487,6 @@ const TrainCoordinationDashboard = () => {
       setAlerts(prev => [alert, ...prev.slice(0, 4)]);
     });
 
-    // Initial data load
     loadTrainsData();
 
     return () => {
@@ -369,7 +499,6 @@ const TrainCoordinationDashboard = () => {
 
   const loadTrainsData = async () => {
     try {
-      // Use the bulk train data endpoint from your backend
       const response = await fetch(`${API_BASE}/trains/bulk`);
       if (response.ok) {
         const trainsData = await response.json();
@@ -389,7 +518,7 @@ const TrainCoordinationDashboard = () => {
       setNetworkStats({
         activeTrains: quickStats.running || 0,
         delayedTrains: quickStats.delayed || 0,
-        averageDelay: 0, // You might need to calculate this
+        averageDelay: 0,
         efficiency: Math.max(70, 100 - (quickStats.conflicts * 5))
       });
       return;
@@ -440,7 +569,7 @@ const TrainCoordinationDashboard = () => {
       if (response.ok) {
         const addedTrain = await response.json();
         console.log('Train added:', addedTrain);
-        loadTrainsData(); // Refresh trains data
+        loadTrainsData();
       }
     } catch (error) {
       console.error('Error adding train:', error);
