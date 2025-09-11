@@ -268,7 +268,8 @@ export function HeroSection() {
         >
           <div className="relative rounded-3xl overflow-hidden shadow-2xl bg-slate-800 border border-slate-700 p-4">
             <ImageWithFallback
-              src="https://images.unsplash.com/photo-1733593202025-e8fac90148c1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjByYWlsd2F5JTIwY29udHJvbCUyMGRhc2hib2FyZHxlbnwxfHx8fDE3NTY1MzE2OTF8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
+              // src="https://images.unsplash.com/photo-1733593202025-e8fac90148c1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjByYWlsd2F5JTIwY29udHJvbCUyMGRhc2hib2FyZHxlbnwxfHx8fDE3NTY1MzE2OTF8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
+              src="https://images.unsplash.com/photo-1727871046152-93ca42358580?q=80&w=1555&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
               alt="Railway Control Dashboard"
               className="w-full h-[400px] sm:h-[500px] object-cover rounded-2xl"
             />
@@ -283,7 +284,7 @@ export function HeroSection() {
                 <div className="h-3 w-3 bg-emerald-400 rounded-full animate-pulse"></div>
                 <span className="text-sm font-semibold text-white">Live Monitoring</span>
               </div>
-              <div className="text-xs text-slate-400">247 trains tracked</div>
+              <div className="text-xs text-slate-400">24/7 trains tracked</div>
             </motion.div>
 
             <motion.div 
@@ -322,7 +323,7 @@ export function HeroSection() {
           transition={{ delay: 0.7 }} 
           className="text-center mt-16"
         >
-          <p className="text-slate-400 mb-4">Join 500+ railway professionals already using RailOptimize</p>
+          <p className="text-slate-400 mb-4">Join 500+ railway professionals already using त्रिवेणीPath</p>
           <div className="flex items-center justify-center space-x-2 text-sm text-slate-400">
             <div className="bg-indigo-500/10 text-indigo-400 rounded-xl p-2 inline-flex">
               <Users className="h-4 w-4" />
