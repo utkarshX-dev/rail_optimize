@@ -6,9 +6,10 @@ import joblib
 import os
 
 # Define API endpoint and file paths
-API_URL = "http://localhost:5000/api/conflicts/export"  # Replace with your backend URL
-DATASET_CSV_PATH = "train_traffic_dataset.csv"         
-MODEL_PATH = "train_coordination_model.pkl"             #  model filepath
+API_URL = "http://localhost:5000/api/conflicts/export"  # Replace with backend URL
+DATASET_CSV_PATH = "train_traffic_dataset.csv"
+MODEL_PATH = "model_latest.joblib"   
+             #  model filepath
 
 def fetch_conflict_logs():
     """Fetch conflict logs via API and return JSON data."""
@@ -29,7 +30,8 @@ def preprocess_conflict_logs(conflicts):
             'time_of_day': features.get('time_of_day', 0),
             'train_count': features.get('train_count', 0),
             'weather_factor': features.get('weather_factor', 1.0),
-            'decision': c.get('decision', 'normal_operation')  # Use original AI decision or map outcome to label if desired
+            'decision': c.get('decision', 'normal_operation') 
+            # Use original AI decision or map outcome to label if desired
         }
         rows.append(row)
     return pd.DataFrame(rows)
