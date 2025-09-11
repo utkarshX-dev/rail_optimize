@@ -49,7 +49,7 @@
 //       </button>
       
 //       <h1 className="text-4xl sm:text-5xl font-bold mb-4">
-//         See RailOptimize in Action
+//         See त्रिवेणीPath in Action
 //       </h1>
 //       <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
 //         Watch how our AI-powered system transforms railway traffic management 
@@ -73,7 +73,7 @@
 //                   <div className="bg-white/20 rounded-full p-8 mb-4 mx-auto w-fit">
 //                     <Play className="h-16 w-16" />
 //                   </div>
-//                   <h3 className="text-2xl font-semibold mb-2">RailOptimize Demo</h3>
+//                   <h3 className="text-2xl font-semibold mb-2">त्रिवेणीPath Demo</h3>
 //                   <p className="text-blue-100">Complete system walkthrough • 4:30 minutes</p>
 //                 </div>
 //               </div>
@@ -184,9 +184,16 @@ export function DemoPage() {
             Back to Home
           </button>
           
+          {/* <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
+            See <span className="text-2xl font-extrabold text-slate-100 transition-colors">
+              त्रिवेणी<span className="text-indigo-400">Path</span>
+            </span> in Action
+          </h1> */}
           <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
-            See RailOptimize in Action
-          </h1>
+    See <span className="font-bold text-slate-100 transition-colors">
+      त्रिवेणी<span className="text-indigo-400">Path</span>
+    </span> in Action
+</h1>
           <p className="text-slate-400 max-w-2xl mx-auto leading-relaxed text-lg">
             Watch how our AI-powered system transforms railway traffic management 
             with intelligent optimization and real-time decision making.
@@ -209,7 +216,7 @@ export function DemoPage() {
                     <div className="bg-indigo-500/20 rounded-full p-8 mb-4 mx-auto w-fit">
                       <Play className="h-16 w-16 text-indigo-400" />
                     </div>
-                    <h3 className="text-2xl font-semibold mb-2">RailOptimize Demo</h3>
+                    <h3 className="text-2xl font-semibold mb-2">त्रिवेणीPath Demo</h3>
                     <p className="text-slate-400">Complete system walkthrough • 4:30 minutes</p>
                   </div>
                 </div>

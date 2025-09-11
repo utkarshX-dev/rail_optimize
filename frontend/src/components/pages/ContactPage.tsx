@@ -30,7 +30,7 @@ export function ContactPage() {
     {
       icon: Mail,
       title: "Email",
-      details: "info@railoptimize.com",
+      details: "info@त्रिवेणीPath.com",
       description: "Send us an email anytime"
     },
     {

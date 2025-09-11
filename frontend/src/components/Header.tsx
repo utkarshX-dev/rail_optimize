@@ -30,7 +30,7 @@
 //             onClick={() => navigate("/")}
 //             whileHover={{ scale: 1.05 }}
 //           >
-//             <span className="text-2xl font-extrabold transition">RailOptimize</span>
+//             <span className="text-2xl font-extrabold transition">त्रिवेणीPath</span>
 //           </motion.div>
 
           

@@ -91,7 +91,7 @@ export function LearnMorePage() {
               <span className="text-blue-600"> Intelligent AI</span>
             </h1>
             <p className="text-xl text-muted-foreground mb-8 leading-relaxed">
-              Discover how RailOptimize revolutionizes railway traffic management through 
+              Discover how त्रिवेणीPath revolutionizes railway traffic management through 
               advanced algorithms, real-time optimization, and human-centered design.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
