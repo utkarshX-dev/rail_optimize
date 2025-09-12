@@ -35,7 +35,7 @@ const getConflicts = async (req, res, next) => {
       await logConflict(
         conflict.trainA,
         conflict.trainB,
-        conflict.decision || "undecided",   // fallback if no AI decision yet
+        conflict.decision || "undecided",   
         conflict.features || {},            // snapshot of state
         "pending"
       );
